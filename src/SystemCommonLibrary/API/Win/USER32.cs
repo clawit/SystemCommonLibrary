@@ -5,9 +5,6 @@ namespace SystemCommonLibrary.API.Win
 {
     public delegate int HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-    /// <summary>
-    /// Helper class containing Gdi32 API functions
-    /// </summary>
     public class USER32
     {
         private const string USER32_DLL = "USER32.DLL";
