@@ -17,9 +17,9 @@ namespace SystemCommonLibrary.API.Win
         public static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hInstance, int threadId);
 
         [DllImport(USER32_DLL)]
-        public static extern bool UnhookWindowsHookEx(int idHook);
+        public static extern bool UnhookWindowsHookEx(IntPtr hHook);
 
         [DllImport(USER32_DLL)]
-        public static extern int CallNextHookEx(int idHook, int nCode, IntPtr wParam, IntPtr lParam);
+        public static extern int CallNextHookEx(IntPtr hHook, int nCode, IntPtr wParam, IntPtr lParam);
     }
 }
