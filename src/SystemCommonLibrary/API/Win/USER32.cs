@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace SystemCommonLibrary.API.Win
 {
-    public delegate int HookProc(int nCode, IntPtr wParam, IntPtr lParam);
+    public delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 
     public class USER32
     {
