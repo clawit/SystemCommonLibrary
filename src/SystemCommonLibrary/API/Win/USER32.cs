@@ -8,7 +8,6 @@ namespace SystemCommonLibrary.API.Win
     public class USER32
     {
         private const string USER32_DLL = "USER32.DLL";
-         
 
         [DllImport(USER32_DLL)]
         public static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hInstance, int threadId);
@@ -18,5 +17,9 @@ namespace SystemCommonLibrary.API.Win
 
         [DllImport(USER32_DLL)]
         public static extern IntPtr CallNextHookEx(IntPtr hHook, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport(USER32_DLL)]
+        public static extern IntPtr GetActiveWindow();
+
     }
 }
