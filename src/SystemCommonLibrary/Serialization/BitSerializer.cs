@@ -305,6 +305,13 @@ namespace SystemCommonLibrary.Serialization
             return (T)Deserialize(typeof(T), data, ref offset);
         }
 
+        public static object Deserialize(string typeName, byte[] data)
+        {
+            var type = Type.GetType(typeName);
+            int offset = 0;
+            return Deserialize(type, data, ref offset);
+        }
+
         /// <summary>
         /// 反序列化
         /// </summary>
