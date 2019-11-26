@@ -428,6 +428,11 @@ namespace SystemCommonLibrary.Serialization
                     var ticks = long.Parse(dstr);
                     obj = (new DateTime(ticks));
                 }
+                else if (type == typeof(Guid))
+                {
+                    var dstr = Encoding.UTF8.GetString(data);
+                    obj = Guid.Parse(dstr);
+                }
                 else if (type.BaseType == typeof(Enum))
                 {
                     var numType = Enum.GetUnderlyingType(type);
@@ -468,13 +473,13 @@ namespace SystemCommonLibrary.Serialization
                         obj = DeserializeClass(type, data);
                     }
                 }
-                else if (type.IsClass)
-                {
-                    obj = DeserializeClass(type, data);
-                }
                 else if (type.IsArray)
                 {
                     obj = DeserializeArray(type, data);
+                }
+                else if (type.IsClass)
+                {
+                    obj = DeserializeClass(type, data);
                 }
                 else
                 {
@@ -493,33 +498,38 @@ namespace SystemCommonLibrary.Serialization
 
             var ts = new List<Type>();
 
-            var ps = type.GetProperties();
-
-            foreach (var p in ps)
+            //var ps = type.GetProperties();
+            var fs = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public
+                                        | BindingFlags.Static | BindingFlags.Instance);
+            ApplyPropertySerializable(fs, type);
+            foreach (var field in fs)
             {
-                ts.Add(p.PropertyType);
+                if (field != null)
+                {
+                    ts.Add(field.FieldType);
+                }
             }
 
             var vas = Deserialize(ts.ToArray(), datas);
 
-            for (int j = 0; j < ps.Length; j++)
+            for (int j = 0; j < fs.Length; j++)
             {
                 try
                 {
-                    if (!ps[j].PropertyType.IsGenericType)
+                    if (!fs[j].FieldType.IsGenericType)
                     {
-                        ps[j].SetValue(instance, vas[j], null);
+                        fs[j].SetValue(instance, vas[j]);
                     }
                     else
                     {
-                        Type genericTypeDefinition = ps[j].PropertyType.GetGenericTypeDefinition();
+                        Type genericTypeDefinition = fs[j].FieldType.GetGenericTypeDefinition();
                         if (genericTypeDefinition == typeof(Nullable<>))
                         {
-                            ps[j].SetValue(instance, Convert.ChangeType(vas[j], Nullable.GetUnderlyingType(ps[j].PropertyType)), null);
+                            fs[j].SetValue(instance, Convert.ChangeType(vas[j], Nullable.GetUnderlyingType(fs[j].FieldType)));
                         }
                         else
                         {
-                            ps[j].SetValue(instance, vas[j], null);
+                            fs[j].SetValue(instance, vas[j]);
                         }
                     }
                 }
