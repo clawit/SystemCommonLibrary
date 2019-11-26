@@ -11,7 +11,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using SystemCommonLibrary.Attribute;
 using SystemCommonLibrary.Reflect;
 
 namespace SystemCommonLibrary.Serialization
@@ -76,6 +78,11 @@ namespace SystemCommonLibrary.Serialization
                     var str = ((DateTime)param).Ticks.ToString();
                     data = Encoding.UTF8.GetBytes(str);
                 }
+                else if (param is Guid)
+                {
+                    var str = ((Guid)param).ToString();
+                    data = Encoding.UTF8.GetBytes(str);
+                }
                 else if (param is Enum)
                 {
                     var enumValType = Enum.GetUnderlyingType(param.GetType());
@@ -107,9 +114,9 @@ namespace SystemCommonLibrary.Serialization
 
                     if (type.IsGenericType || type.IsArray)
                     {
-                        if (TypeInfo.DicTypes.Contains(type.Name))
+                        if (SlimTypeInfo.DicTypes.Contains(type.Name))
                             data = SerializeDic((System.Collections.IDictionary)param);
-                        else if (TypeInfo.ListTypes.Contains(type.Name) || type.IsArray)
+                        else if (SlimTypeInfo.ListTypes.Contains(type.Name) || type.IsArray)
                             data = SerializeList((System.Collections.IEnumerable)param);
                         else
                             data = SerializeClass(param, type);
@@ -141,26 +148,32 @@ namespace SystemCommonLibrary.Serialization
 
             byte[] data = null;
 
-            var ps = type.GetProperties();
-
-            if (ps != null && ps.Length > 0)
+            var fs = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public
+                                        | BindingFlags.Static | BindingFlags.Instance);
+            
+            if (fs != null && fs.Length > 0)
             {
                 List<object> clist = new List<object>();
 
-                foreach (var p in ps)
+                ApplyPropertySerializable(fs, type);
+                foreach (var field in fs)
                 {
-                    clist.Add(p.GetValue(obj, null));
-                    //clist.Add(FastInvoke.Getter(type, obj, p));
+                    if (field != null)
+                    {
+                        clist.Add(field.GetValue(obj));
+                    }
                 }
+                
                 data = Serialize(clist.ToArray());
 
                 len = data.Length;
             }
+
+
             if (len > 0)
-            {
                 return data;
-            }
-            return null;
+            else
+                return null;
         }
 
         private static byte[] SerializeList(System.Collections.IEnumerable param)
@@ -250,8 +263,46 @@ namespace SystemCommonLibrary.Serialization
             return null;
         }
 
+        private static void ApplyPropertySerializable(FieldInfo[] fields, Type type)
+        {
+            if (fields != null && fields.Length > 0)
+            {
+                var properties = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public
+                                        | BindingFlags.Static | BindingFlags.Instance);
+                var propertyNames = properties.Select(p => p.Name);
+
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    var fi = fields[i];
+                    var fiName = fi.Name;
+                    if (fiName.EndsWith("k__BackingField")
+                        && fiName.Contains("<") && fiName.Contains(">"))
+                    {
+                        var propertyName = fiName.Replace("k__BackingField", string.Empty)
+                                                .Replace("<", string.Empty).Replace(">", string.Empty);
+                        if (propertyNames.Contains(propertyName))
+                        {
+                            var property = properties.SingleOrDefault(p => p.Name == propertyName);
+                            if (property != null
+                                && property.IsDefined(typeof(NoSerializeAttribute)))
+                            {
+                                fields[i] = null;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (fi.IsDefined(typeof(NoSerializeAttribute)))
+                        {
+                            fields[i] = null;
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
-        /// len+data
+        /// 序列化
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
@@ -404,11 +455,11 @@ namespace SystemCommonLibrary.Serialization
                 }
                 else if (type.IsGenericType)
                 {
-                    if (TypeInfo.ListTypes.Contains(type.Name))
+                    if (SlimTypeInfo.ListTypes.Contains(type.Name))
                     {
                         obj = DeserializeList(type, data);
                     }
-                    else if (TypeInfo.DicTypes.Contains(type.Name))
+                    else if (SlimTypeInfo.DicTypes.Contains(type.Name))
                     {
                         obj = DeserializeDic(type, data);
                     }
@@ -436,7 +487,7 @@ namespace SystemCommonLibrary.Serialization
 
         private static object DeserializeClass(Type type, byte[] datas)
         {
-            var tinfo = TypeInfo.GetOrAddInstance(type);
+            var tinfo = SlimTypeInfo.GetOrAddInstance(type);
 
             var instance = tinfo.Instance;
 
@@ -483,7 +534,7 @@ namespace SystemCommonLibrary.Serialization
 
         private static object DeserializeList(Type type, byte[] datas)
         {
-            var info = TypeInfo.GetOrAddInstance(type);
+            var info = SlimTypeInfo.GetOrAddInstance(type);
 
             var instance = info.Instance;
 
@@ -550,7 +601,7 @@ namespace SystemCommonLibrary.Serialization
 
         private static object DeserializeDic(Type type, byte[] datas)
         {
-            var tinfo = TypeInfo.GetOrAddInstance(type);
+            var tinfo = SlimTypeInfo.GetOrAddInstance(type);
 
             var instance = tinfo.Instance;
 

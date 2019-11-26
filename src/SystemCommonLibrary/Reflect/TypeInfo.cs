@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace SystemCommonLibrary.Reflect
 {
-    public class TypeInfo
+    public class SlimTypeInfo
     {
         public Type Type { get; set; }
 
@@ -17,7 +17,7 @@ namespace SystemCommonLibrary.Reflect
 
         private static readonly object _syncLock = new object();
 
-        private static readonly ConcurrentDictionary<string, TypeInfo> _instanceCache = new ConcurrentDictionary<string, TypeInfo>();
+        private static readonly ConcurrentDictionary<string, SlimTypeInfo> _instanceCache = new ConcurrentDictionary<string, SlimTypeInfo>();
 
         public static readonly string[] ListTypes = { "List`1", "HashSet`1", "IList`1", "ISet`1", "ICollection`1", "IEnumerable`1" };
 
@@ -28,7 +28,7 @@ namespace SystemCommonLibrary.Reflect
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static TypeInfo GetOrAddInstance(Type type, string methodName = "Add")
+        public static SlimTypeInfo GetOrAddInstance(Type type, string methodName = "Add")
         {
             if (type.IsInterface)
             {
@@ -39,7 +39,7 @@ namespace SystemCommonLibrary.Reflect
             {
                 var fullName = type.FullName + methodName;
 
-                TypeInfo typeInfo = _instanceCache.GetOrAdd(fullName, (v) =>
+                SlimTypeInfo typeInfo = _instanceCache.GetOrAdd(fullName, (v) =>
                 {
                     Type[] argsTypes = null;
 
@@ -51,7 +51,7 @@ namespace SystemCommonLibrary.Reflect
 
                     var mi = type.GetMethod(methodName);
 
-                    return new TypeInfo()
+                    return new SlimTypeInfo()
                     {
                         Type = type,
                         MethodInfo = mi,
@@ -70,7 +70,7 @@ namespace SystemCommonLibrary.Reflect
         /// <param name="type"></param>
         /// <param name="info"></param>
         /// <returns></returns>
-        public static TypeInfo GetOrAddInstance(Type type, MethodInfo info)
+        public static SlimTypeInfo GetOrAddInstance(Type type, MethodInfo info)
         {
             lock (_syncLock)
             {
@@ -81,9 +81,9 @@ namespace SystemCommonLibrary.Reflect
 
                 var fullName = type.FullName + info.Name;
 
-                TypeInfo typeInfo = _instanceCache.GetOrAdd(fullName, (v) =>
+                SlimTypeInfo typeInfo = _instanceCache.GetOrAdd(fullName, (v) =>
                 {
-                    return new TypeInfo()
+                    return new SlimTypeInfo()
                     {
                         Type = type,
                         MethodInfo = info
