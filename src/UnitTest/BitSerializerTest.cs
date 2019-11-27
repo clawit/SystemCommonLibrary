@@ -40,7 +40,6 @@ namespace UnitTest
 
     public class LevelThree
     {
-        [NoSerialize]
         public Type Dim1 { get; set; }
 
         [NoSerialize]
@@ -53,6 +52,9 @@ namespace UnitTest
         public byte Dim5 = 20;
 
         public LevelEnum Dim6;
+
+        [NoSerialize]
+        public double Dim7 { get; set;}
     }
 
     public enum LevelEnum
@@ -74,7 +76,7 @@ namespace UnitTest
                     Dim2 = new int[] { 1, 10, 100, 1000 },
                     Dim3 = new Dictionary<string, object>(),
                     Dim4 = new LevelThree() {
-                        Dim1 = typeof(int),
+                        Dim1 = typeof(LevelTwo),
                         Dim2 = 2000,
                         Dim3 = Guid.NewGuid(),
                         Dim4 = Convert.FromBase64String("VmFs"),
@@ -87,10 +89,20 @@ namespace UnitTest
 
             var bytes = BitSerializer.Serialize(src);
 
-            var obj = BitSerializer.Deserialize("UnitTest.LevelOne, UnitTest", bytes);
+            var obj = BitSerializer.Deserialize("UnitTest.LevelOne, UnitTest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", bytes);
             var dest = (LevelOne)obj;
 
             Assert.Equal(src.Dim1, dest.Dim1);
+            Assert.Equal(src.Dim4, dest.Dim4);
+            Assert.Equal(111, LevelOne.Dim7);
+            Assert.Equal(src.Dim5.Dim1, dest.Dim5.Dim1);
+            Assert.Equal(src.Dim5.Dim2, dest.Dim5.Dim2);
+            Assert.Equal(src.Dim5.Dim4.Dim1, dest.Dim5.Dim4.Dim1);
+            Assert.Equal(10000, dest.Dim5.Dim4.Dim2);
+            Assert.Equal(src.Dim5.Dim4.Dim3, dest.Dim5.Dim4.Dim3);
+            Assert.Equal(src.Dim5.Dim4.Dim4, dest.Dim5.Dim4.Dim4);
+            Assert.Equal(src.Dim5.Dim4.Dim5, dest.Dim5.Dim4.Dim5);
+            Assert.Equal(src.Dim5.Dim4.Dim6, dest.Dim5.Dim4.Dim6);
         }
     }
 }

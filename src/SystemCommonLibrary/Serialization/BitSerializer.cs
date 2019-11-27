@@ -73,6 +73,11 @@ namespace SystemCommonLibrary.Serialization
                 {
                     data = BitConverter.GetBytes((double)param);
                 }
+                else if (param is decimal)
+                {
+                    var str = ((decimal)param).ToString();
+                    data = Encoding.UTF8.GetBytes(str);
+                }
                 else if (param is DateTime)
                 {
                     var str = ((DateTime)param).Ticks.ToString();
@@ -81,6 +86,11 @@ namespace SystemCommonLibrary.Serialization
                 else if (param is Guid)
                 {
                     var str = ((Guid)param).ToString();
+                    data = Encoding.UTF8.GetBytes(str);
+                }
+                else if (param is Type)
+                {
+                    var str = ((Type)param).AssemblyQualifiedName;
                     data = Encoding.UTF8.GetBytes(str);
                 }
                 else if (param is Enum)
@@ -392,7 +402,7 @@ namespace SystemCommonLibrary.Serialization
                 }
                 else if (type == typeof(byte))
                 {
-                    obj = (data);
+                    obj = data[0];
                 }
                 else if (type == typeof(bool))
                 {
@@ -420,7 +430,9 @@ namespace SystemCommonLibrary.Serialization
                 }
                 else if (type == typeof(decimal))
                 {
-                    obj = (BitConverter.ToDouble(data, 0));
+                    var dstr = Encoding.UTF8.GetString(data);
+                    
+                    obj = decimal.Parse(dstr); ;
                 }
                 else if (type == typeof(DateTime))
                 {
@@ -432,6 +444,11 @@ namespace SystemCommonLibrary.Serialization
                 {
                     var dstr = Encoding.UTF8.GetString(data);
                     obj = Guid.Parse(dstr);
+                }
+                else if (type == typeof(Type))
+                {
+                    var dstr = Encoding.UTF8.GetString(data);
+                    obj = Type.GetType(dstr);
                 }
                 else if (type.BaseType == typeof(Enum))
                 {
@@ -512,30 +529,31 @@ namespace SystemCommonLibrary.Serialization
 
             var vas = Deserialize(ts.ToArray(), datas);
 
-            for (int j = 0; j < fs.Length; j++)
+            var fsWithoutNull = fs.Where(f => f != null).ToArray();
+            for (int j = 0; j < fsWithoutNull.Length; j++)
             {
                 try
                 {
-                    if (!fs[j].FieldType.IsGenericType)
+                    if (!fsWithoutNull[j].FieldType.IsGenericType)
                     {
-                        fs[j].SetValue(instance, vas[j]);
+                        fsWithoutNull[j].SetValue(instance, vas[j]);
                     }
                     else
                     {
-                        Type genericTypeDefinition = fs[j].FieldType.GetGenericTypeDefinition();
+                        Type genericTypeDefinition = fsWithoutNull[j].FieldType.GetGenericTypeDefinition();
                         if (genericTypeDefinition == typeof(Nullable<>))
                         {
-                            fs[j].SetValue(instance, Convert.ChangeType(vas[j], Nullable.GetUnderlyingType(fs[j].FieldType)));
+                            fsWithoutNull[j].SetValue(instance, Convert.ChangeType(vas[j], Nullable.GetUnderlyingType(fsWithoutNull[j].FieldType)));
                         }
                         else
                         {
-                            fs[j].SetValue(instance, vas[j]);
+                            fsWithoutNull[j].SetValue(instance, vas[j]);
                         }
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
-                    throw new NotImplementedException("未定义的类型：" + type.ToString());
+                    throw new NotImplementedException("未定义的类型：" + type.ToString(), ex);
                 }
             }
 
@@ -600,13 +618,25 @@ namespace SystemCommonLibrary.Serialization
 
         private static object DeserializeArray(Type type, byte[] datas)
         {
-            var obj = DeserializeList(type, datas);
+            var originTypeName = type.AssemblyQualifiedName.Replace("[]", string.Empty);
+            Type originType = Type.GetType(originTypeName);
+            if (originType == null) return null;
+
+            var listName = typeof(List<object>).AssemblyQualifiedName;
+            var objName = typeof(object).AssemblyQualifiedName;
+            var listTypeName = listName.Replace(objName, originTypeName);
+
+            var listType = Type.GetType(listTypeName);
+            if (listType == null) return null;
+
+            var obj = DeserializeList(listType, datas);
 
             if (obj == null) return null;
 
-            var list = (obj as List<object>);
+            var toArray = listType.GetMethod("ToArray");
+            var list = toArray.Invoke(obj, null);
 
-            return list.ToArray();
+            return list;
         }
 
         private static object DeserializeDic(Type type, byte[] datas)
