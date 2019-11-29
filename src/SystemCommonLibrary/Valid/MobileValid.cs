@@ -15,8 +15,8 @@ namespace SystemCommonLibrary.Network.Valid
         public static ValidResult IsMobile(string mobile)
         {
             //检查是否为空
-            var strCheck = StringValid.CheckEmpty(mobile);
-            if (strCheck.Correct)
+            var strCheck = StringValid.IsEmpty(mobile);
+            if (strCheck)
             {
                 //检查是否符合正则格式
                 var regex = new Regex(@"^1[3-9]\d{9}$");

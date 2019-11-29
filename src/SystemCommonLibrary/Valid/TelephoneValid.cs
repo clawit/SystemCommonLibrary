@@ -11,13 +11,13 @@ namespace SystemCommonLibrary.Network.Valid
         /// <param name="areaCode"></param>
         /// <param name="landline"></param>
         /// <returns></returns>
-        public static bool IsValidTelephoneNo(string tel, out string areaCode, out string landline)
+        public static ValidResult IsValidPhone(string tel, out string areaCode, out string landline)
         {
             areaCode = string.Empty;
             landline = string.Empty;
             if (string.IsNullOrEmpty(tel))
             {
-                return false;
+                return new ValidResult(false, ValidFailCode.IsNullOrWhiteSpace, "手机号为空");
             }
             var reg = new Regex(@"^(?:(0(?:10|2[0-57-9]|[3-9]\d{2}))[-—]?)(\d{7,8})$");
             var match = reg.Match(tel);
@@ -25,10 +25,10 @@ namespace SystemCommonLibrary.Network.Valid
             {
                 areaCode = match.Groups[1].Value;
                 landline = match.Groups[2].Value;
-                return true;
+                return ValidResult.Success;
             }
-
-            return false;
+            else
+                return new ValidResult(false, ValidFailCode.WrongFormat, "手机格式错误");
         }
     }
 }

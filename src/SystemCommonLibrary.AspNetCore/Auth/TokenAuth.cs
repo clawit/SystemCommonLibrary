@@ -25,7 +25,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     return false;
                 else
                 {
-                    if (auth.Id == 0 || !StringValid.CheckEmpty(auth.Token).Correct)
+                    if (auth.Id == 0 || !StringValid.IsEmpty(auth.Token))
                         return false;
                     else
                         return checkToken(auth.Id, auth.Token, HttpClientReader.Read(agents));

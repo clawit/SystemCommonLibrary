@@ -10,7 +10,6 @@ namespace SystemCommonLibrary.Network.Valid
     /// </summary>
     public static class RegularValid
     {
-
         /// <summary>
         /// 检验是否匹配
         /// </summary>

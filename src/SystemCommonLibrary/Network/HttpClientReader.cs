@@ -12,8 +12,7 @@ namespace SystemCommonLibrary.Network
     {
         public static HttpClientType Read(string agents)
         {
-            if (!NullValid.CheckNull(agents).Correct
-                || !StringValid.CheckEmpty(agents).Correct)
+            if (!NullValid.IsNull(agents) || !StringValid.IsEmpty(agents))
             {
                 return HttpClientType.Web;
             }
@@ -41,8 +40,7 @@ namespace SystemCommonLibrary.Network
 
             foreach (var agent in agents)
             {
-                if (!NullValid.CheckNull(agent.Product).Correct
-                    || !StringValid.CheckEmpty(agent.Product.Name).Correct)
+                if (!NullValid.IsNull(agent.Product) || !StringValid.IsEmpty(agent.Product.Name))
                 {
                     continue;
                 }

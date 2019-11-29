@@ -1,4 +1,6 @@
-﻿namespace SystemCommonLibrary.Network.Valid
+﻿using System;
+
+namespace SystemCommonLibrary.Network.Valid
 {
     /// <summary>
     /// 空对象检查
@@ -10,7 +12,7 @@
         /// </summary>
         /// <param name="value">需要校验的对象</param>
         /// <returns>返回校验结果</returns>
-        public static ValidResult CheckNull(object value)
+        public static ValidResult IsNull(object value)
         {
             //校验对象
             if (value == null)

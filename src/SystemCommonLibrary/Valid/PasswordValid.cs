@@ -12,12 +12,10 @@ namespace SystemCommonLibrary.Network.Valid
         /// </summary>
         /// <param name="pwd">需要进行校验的密码字符串</param>
         /// <returns>返回校验结果</returns>
-        public static ValidResult IsLoginPwd(string pwd)
+        public static ValidResult IsStrongPassword(string pwd)
         {
-            var strCheck = StringValid.CheckEmpty(pwd);
-
             //如果密码字符串空校验通过
-            if (strCheck.Correct)
+            if (StringValid.IsEmpty(pwd))
             {
                 //密码长度必须在6~20位之间
                 if (pwd.Length < 6 || pwd.Length > 20)
@@ -40,7 +38,7 @@ namespace SystemCommonLibrary.Network.Valid
             }
             else
             {
-                return strCheck.WithMessage("密码为空");
+                return new ValidResult(false, ValidFailCode.IsNullOrWhiteSpace, "密码不能为空");
             }
         }
     }

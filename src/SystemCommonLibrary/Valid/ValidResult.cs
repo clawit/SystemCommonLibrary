@@ -26,9 +26,14 @@
         /// 验证结果错误代码
         /// </summary>
         public ValidFailCode Code { get; set; }
+
+        public static implicit operator bool(ValidResult result)
+        {
+            return result.Correct;
+        }
     }
 
-    public static class ValidResultExt
+    public static class ValidResultExtension
     {
         public static ValidResult WithMessage(this ValidResult result, string message)
         {
