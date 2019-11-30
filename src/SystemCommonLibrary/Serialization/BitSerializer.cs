@@ -158,23 +158,21 @@ namespace SystemCommonLibrary.Serialization
 
             byte[] data = null;
 
-            var fs = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public
-                                        | BindingFlags.Static | BindingFlags.Instance);
+            var fs = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             
             if (fs != null && fs.Length > 0)
             {
-                List<object> clist = new List<object>();
-
+                Dictionary<Type, object> dicFields = new Dictionary<Type, object>();
                 ApplyPropertySerializable(fs, type);
                 foreach (var field in fs)
                 {
                     if (field != null)
                     {
-                        clist.Add(field.GetValue(obj));
+                        dicFields.Add(field.FieldType, field.GetValue(obj));
                     }
                 }
                 
-                data = Serialize(clist.ToArray());
+                data = Serialize(dicFields);
 
                 len = data.Length;
             }
@@ -277,8 +275,7 @@ namespace SystemCommonLibrary.Serialization
         {
             if (fields != null && fields.Length > 0)
             {
-                var properties = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public
-                                        | BindingFlags.Static | BindingFlags.Instance);
+                var properties = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 var propertyNames = properties.Select(p => p.Name);
 
                 for (int i = 0; i < fields.Length; i++)
@@ -316,7 +313,7 @@ namespace SystemCommonLibrary.Serialization
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
-        public static byte[] Serialize(params object[] @params)
+        public static byte[] Serialize(Dictionary<Type, object> @params)
         {
             List<byte> datas = new List<byte>();
 
@@ -324,7 +321,17 @@ namespace SystemCommonLibrary.Serialization
             {
                 foreach (var param in @params)
                 {
-                    datas.AddRange(Serialize(param));
+                    if (param.Key.IsObject())
+                    {
+                        List<byte> objParam = new List<byte>();
+                        var realTypeName = param.Value.GetType().AssemblyQualifiedName;
+                        objParam.AddRange(Serialize(realTypeName));
+                        objParam.AddRange(Serialize(param.Value));
+
+                        datas.AddRange(Serialize(objParam.ToArray()));
+                    }
+                    else
+                        datas.AddRange(Serialize(param.Value));
                 }
             }
 
@@ -396,6 +403,21 @@ namespace SystemCommonLibrary.Serialization
                 Buffer.BlockCopy(datas, offset, data, 0, len);
                 offset += len;
 
+                if (type.IsObject())
+                {
+                    var lenTypeName = BitConverter.ToInt32(data, 0) + 4;
+                    byte[] dataTypeName = new byte[lenTypeName];
+                    Buffer.BlockCopy(data, 0, dataTypeName, 0, lenTypeName);
+                    var realTypeName = (string)Deserialize(typeof(string).AssemblyQualifiedName, dataTypeName);
+
+                    //将获得的类型赋值后处理真正的数据
+                    type = Type.GetType(realTypeName);
+                    var srcData = data;
+                    len = BitConverter.ToInt32(data, lenTypeName);
+                    data = new byte[len];
+                    Buffer.BlockCopy(srcData, lenTypeName + 4, data, 0, len);
+                }
+
                 if (type == typeof(string))
                 {
                     obj = Encoding.UTF8.GetString(data);
@@ -431,7 +453,7 @@ namespace SystemCommonLibrary.Serialization
                 else if (type == typeof(decimal))
                 {
                     var dstr = Encoding.UTF8.GetString(data);
-                    
+
                     obj = decimal.Parse(dstr); ;
                 }
                 else if (type == typeof(DateTime))
@@ -504,6 +526,12 @@ namespace SystemCommonLibrary.Serialization
                 }
 
             }
+            else
+            {
+                var tinfo = SlimTypeInfo.GetOrAddInstance(type);
+                obj = tinfo.Instance;
+            }
+
             return obj;
         }
 
@@ -516,8 +544,7 @@ namespace SystemCommonLibrary.Serialization
             var ts = new List<Type>();
 
             //var ps = type.GetProperties();
-            var fs = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public
-                                        | BindingFlags.Static | BindingFlags.Instance);
+            var fs = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             ApplyPropertySerializable(fs, type);
             foreach (var field in fs)
             {

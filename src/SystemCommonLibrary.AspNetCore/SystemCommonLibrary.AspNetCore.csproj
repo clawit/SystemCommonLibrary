@@ -3,9 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.3.1.0</Version>
+    <Version>0.3.1.1</Version>
     <Copyright>clawit.com</Copyright>
-    <PackageLicenseUrl>https://www.gnu.org/licenses/gpl-3.0.en.html</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageLicenseExpression>CC-BY-SA-4.0</PackageLicenseExpression>
+    <AssemblyVersion>0.3.1.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -25,6 +25,8 @@ namespace UnitTest
         private static float Dim8 { get; set; } = 2.22F;
 
         public static double Dim9 { get; set; } = 3.33;
+
+        public object Dim10 = new List<string>() { "Val" };
     }
 
     public class LevelTwo
@@ -86,17 +88,18 @@ namespace UnitTest
                 }
             };
 
-
             var bytes = BitSerializer.Serialize(src);
 
-            var obj = BitSerializer.Deserialize("UnitTest.LevelOne, UnitTest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", bytes);
+            var obj = BitSerializer.Deserialize(typeof(LevelOne).AssemblyQualifiedName, bytes);
             var dest = (LevelOne)obj;
 
             Assert.Equal(src.Dim1, dest.Dim1);
             Assert.Equal(src.Dim4, dest.Dim4);
             Assert.Equal(111, LevelOne.Dim7);
+            Assert.Equal(src.Dim10, dest.Dim10);
             Assert.Equal(src.Dim5.Dim1, dest.Dim5.Dim1);
             Assert.Equal(src.Dim5.Dim2, dest.Dim5.Dim2);
+            Assert.Equal(src.Dim5.Dim3, dest.Dim5.Dim3);
             Assert.Equal(src.Dim5.Dim4.Dim1, dest.Dim5.Dim4.Dim1);
             Assert.Equal(10000, dest.Dim5.Dim4.Dim2);
             Assert.Equal(src.Dim5.Dim4.Dim3, dest.Dim5.Dim4.Dim3);
