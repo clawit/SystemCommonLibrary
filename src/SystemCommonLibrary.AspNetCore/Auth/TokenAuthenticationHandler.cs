@@ -44,14 +44,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                 }
                 else
                 {
-                    var identity = new ClaimsIdentity(this.Scheme.Name);
-                    identity.AddClaim(new Claim(this.Scheme.Name, authorization));
-                    var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), Scheme.Name);
-                    return Task.FromResult(AuthenticateResult.Success(ticket));
-                    //TODO:现在,因为历史遗留版本问题, 为了兼容旧版暂时对于客户端的API不验证.
-                    //但如果有, 还是验证一下, 将来如果版本都迭代好了, 就全部验证.
-                    //只需注释上面的代码,解注释下面的代码即可
-                    //return Task.FromResult(AuthenticateResult.Fail("No credentials."));
+                    return Task.FromResult(AuthenticateResult.Fail("No credentials."));
                 }
             }
             else 
