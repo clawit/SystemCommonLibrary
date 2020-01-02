@@ -7,9 +7,9 @@ namespace SystemCommonLibrary.AspNetCore.Firewall
 {
     public static class FirewallExtensions
     {
-        public static IApplicationBuilder UseFirewall(this IApplicationBuilder builder, IFirewallRule rule)
+        public static IApplicationBuilder UseFirewall(this IApplicationBuilder builder, List<FirewallRule> rules)
         {
-            return builder.UseMiddleware<FirewallMiddleware>(rule);
+            return builder.UseMiddleware<FirewallMiddleware>(rules);
         }
     }
 }

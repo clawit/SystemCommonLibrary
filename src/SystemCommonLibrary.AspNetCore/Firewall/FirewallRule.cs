@@ -5,8 +5,8 @@ using System.Text;
 
 namespace SystemCommonLibrary.AspNetCore.Firewall
 {
-    public interface IFirewallRule
+    public abstract class FirewallRule
     {
-        bool IsAllowed(HttpContext context, FirewallRuleRelation relation);
+        public abstract bool IsAllowed(HttpContext context);
     }
 }

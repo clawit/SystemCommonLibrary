@@ -9,20 +9,9 @@ namespace SystemCommonLibrary.AspNetCore.Firewall
     /// <summary>
     /// A Firewall rule which permits access to connections from localhost.
     /// </summary>
-    public sealed class LocalhostRule : IFirewallRule
+    public sealed class AllowLocalhostRule : FirewallRule
     {
-        private readonly IFirewallRule _nextRule;
-
-        /// <summary>
-        /// Initialises a new instance of <see cref="LocalhostRule"/>.
-        /// </summary>
-        public LocalhostRule(IFirewallRule nextRule) =>
-            _nextRule = nextRule ?? throw new ArgumentNullException(nameof(nextRule));
-
-        /// <summary>
-        /// Denotes whether a given <see cref="HttpContext"/> is permitted to access the web server.
-        /// </summary>
-        public bool IsAllowed(HttpContext context)
+        public override bool IsAllowed(HttpContext context)
         {
             var localIpAddress = context.Connection.LocalIpAddress;
             var remoteIpAddress = context.Connection.RemoteIpAddress;
@@ -33,7 +22,7 @@ namespace SystemCommonLibrary.AspNetCore.Firewall
                     && remoteIpAddress.Equals(localIpAddress))
                 || IPAddress.IsLoopback(remoteIpAddress);
 
-            return isLocalhost || _nextRule.IsAllowed(context);
+            return isLocalhost;
         }
     }
 }

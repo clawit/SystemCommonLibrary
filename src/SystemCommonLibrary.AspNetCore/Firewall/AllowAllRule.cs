@@ -5,12 +5,9 @@ using System.Text;
 
 namespace SystemCommonLibrary.AspNetCore.Firewall
 {
-    public sealed class AllowAllRule : IFirewallRule
+    public sealed class AllowAllRule : FirewallRule
     {
-        /// <summary>
-        /// Denotes whether a given <see cref="HttpContext"/> is permitted to access the web server.
-        /// </summary>
-        public bool IsAllowed(HttpContext context, FirewallRuleRelation relation)
+        public override bool IsAllowed(HttpContext context)
         {
             return true;
         }

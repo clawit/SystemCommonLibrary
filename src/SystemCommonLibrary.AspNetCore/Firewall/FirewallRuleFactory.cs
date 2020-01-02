@@ -8,31 +8,20 @@ namespace SystemCommonLibrary.AspNetCore.Firewall
 {
     public static class FirewallRuleFactory
     {
-        /// <summary>
-        /// Configures the Firewall to deny all access.
-        /// <para>Use this as the base rule before configuring other rules.</para>
-        /// </summary>
-        public static IFirewallRule DenyAll()
+        public static List<FirewallRule> AllowAll()
         {
-            return new DenyAllRule();
+            return new List<FirewallRule>() { new AllowAllRule() };
         }
 
-        /// <summary>
-        /// Configures the Firewall to deny all access.
-        /// <para>Use this as the base rule before configuring other rules.</para>
-        /// </summary>
-        public static IFirewallRule AllowAll()
+        public static List<FirewallRule> OnlyLocalhost()
         {
-            return new AllowAllRule();
+            return new List<FirewallRule>() { new AllowLocalhostRule() };
         }
 
-        /// <summary>
-        /// Configures the Firewall to allow requests from localhost.
-        /// </summary>
-        public static IFirewallRule ExceptFromLocalhost(this IFirewallRule rule)
+        public static List<FirewallRule> OnRoute(this List<FirewallRule> rules, string[] routes)
         {
-            return new LocalhostRule(rule);
+            rules.Add(new OnRouteRule(routes));
+            return rules;
         }
-
     }
 }
