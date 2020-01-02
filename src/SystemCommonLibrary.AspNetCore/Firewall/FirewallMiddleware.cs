@@ -10,12 +10,12 @@ namespace SystemCommonLibrary.AspNetCore.Firewall
     public sealed class FirewallMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly List<IFirewallRule> _rules;
+        private readonly List<FirewallRule> _rules;
 
         /// <summary>
         /// Instantiates a new object of type <see cref="FirewallMiddleware"/>.
         /// </summary>
-        public FirewallMiddleware(RequestDelegate next, List<IFirewallRule> rule)
+        public FirewallMiddleware(RequestDelegate next, List<FirewallRule> rule)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _rules = rule ?? throw new ArgumentNullException(nameof(rule));

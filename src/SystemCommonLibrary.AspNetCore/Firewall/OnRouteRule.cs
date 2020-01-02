@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SystemCommonLibrary.AspNetCore.Firewall
 {
@@ -20,9 +22,14 @@ namespace SystemCommonLibrary.AspNetCore.Firewall
 
         public override bool IsAllowed(HttpContext context)
         {
-            
+            string path = context.Request.Path.Value;
+            return _routes.Any(r => IsMatch(r, path));
+        }
 
-            return true;
+        private bool IsMatch(string rule, string path)
+        {
+            Regex regex = new Regex(rule, RegexOptions.IgnoreCase);
+            return regex.IsMatch(path);
         }
     }
 }
