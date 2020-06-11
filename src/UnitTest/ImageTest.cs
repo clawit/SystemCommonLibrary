@@ -13,7 +13,7 @@ namespace UnitTest
         public void Image2Base64Test()
         {
             var img = ImageProcessor.ReadFromFile("TestData/mount.jpg");
-            var ms = ImageProcessor.AddWatermark(img, "TUUTKUˮӡ");
+            var ms = ImageProcessor.AddWatermark(img, "TUUTKU图库");
             string s = ImageProcessor.ImgToBase64String(ms);
 
             
