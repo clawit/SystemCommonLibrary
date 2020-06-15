@@ -17,7 +17,7 @@ namespace SystemCommonLibrary.Graphic
             return new Bitmap(filename);        
         }
 
-        public static MemoryStream AddWatermark(Image bitmap, string watermark, Font font = null)
+        public static MemoryStream AddWatermark(Image bitmap, Image watermark)
         {
             var stream = new MemoryStream();
             var image = new Bitmap(bitmap);
@@ -27,17 +27,9 @@ namespace SystemCommonLibrary.Graphic
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphics.CompositingMode = CompositingMode.SourceCopy;
 
-                if (font == null)
-                {
-                    font = new Font(FontFamily.GenericSansSerif, 20, FontStyle.Bold, GraphicsUnit.Pixel);
-                }
-                var size = graphics.MeasureString(watermark, font);
+                var pos = new Point(image.Width - watermark.Width, image.Height - watermark.Height);
 
-                var color = Color.FromArgb(128, 255, 255, 255);
-                var brush = new SolidBrush(color);
-                var pos = new PointF((image.Width - size.Width)/2, (image.Height - size.Height)/2 - 30);
-
-                graphics.DrawString(watermark, font, brush, pos);
+                graphics.DrawImageUnscaled(watermark, pos);
                 image.Save(stream, ImageFormat.Jpeg);
 
                 return stream;

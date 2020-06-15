@@ -13,10 +13,11 @@ namespace UnitTest
         public void Image2Base64Test()
         {
             var img = ImageProcessor.ReadFromFile("TestData/mount.jpg");
-            var ms = ImageProcessor.AddWatermark(img, "TUUTKU图库");
+            var watermark = ImageProcessor.ReadFromFile("TestData/avt.png");
+            var ms = ImageProcessor.AddWatermark(img, watermark);
             string s = ImageProcessor.ImgToBase64String(ms);
 
-            
+            Assert.True(true);
         }
     }
 }
