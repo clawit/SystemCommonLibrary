@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,23 +21,22 @@ namespace SystemCommonLibrary.Graphic
         public static MemoryStream AddWatermark(Image bitmap, Image watermark)
         {
             var stream = new MemoryStream();
-            var image = new Bitmap(bitmap);
-            using (var graphics = Graphics.FromImage(image))
+            using (var graphics = Graphics.FromImage(bitmap))
             {
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.CompositingMode = CompositingMode.SourceCopy;
+                //graphics.CompositingMode = CompositingMode.SourceOver;
 
-                var pos = new Point(image.Width - watermark.Width, image.Height - watermark.Height);
-
-                graphics.DrawImageUnscaled(watermark, pos);
-                image.Save(stream, ImageFormat.Jpeg);
+                var srcRect = new Rectangle(0, 0, watermark.Width, watermark.Height);
+                var destRect = new Rectangle(bitmap.Width - watermark.Width, bitmap.Height - watermark.Height, watermark.Width, watermark.Height);
+                graphics.DrawImage(watermark, destRect, srcRect, GraphicsUnit.Pixel);
+                bitmap.Save(stream, ImageFormat.Jpeg);
 
                 return stream;
             }
         }
 
-        public static string ImgToBase64String(MemoryStream stream)
+        public static string StreamToBase64Image(MemoryStream stream)
         {
             byte[] bytes = new byte[stream.Length];
             stream.Position = 0;
