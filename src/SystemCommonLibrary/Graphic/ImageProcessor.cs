@@ -30,20 +30,41 @@ namespace SystemCommonLibrary.Graphic
                 var srcRect = new Rectangle(0, 0, watermark.Width, watermark.Height);
                 var destRect = new Rectangle(bitmap.Width - watermark.Width, bitmap.Height - watermark.Height, watermark.Width, watermark.Height);
                 graphics.DrawImage(watermark, destRect, srcRect, GraphicsUnit.Pixel);
-                bitmap.Save(stream, ImageFormat.Jpeg);
+                bitmap.Save(stream, bitmap.RawFormat);
 
                 return stream;
             }
         }
 
-        public static string StreamToBase64Image(MemoryStream stream)
+        public static string ImageToBase64Image(Image img)
         {
+            using (var ms = new MemoryStream())
+            {
+                img.Save(ms, img.RawFormat);
+                return StreamToBase64Image(ms, img.RawFormat);
+            }
+        }
+
+        public static string StreamToBase64Image(MemoryStream stream, ImageFormat imageFormat)
+        {
+            string prefix = string.Empty;
+            if (imageFormat.Equals(ImageFormat.Jpeg))
+            {
+                prefix = "data:image/jpeg;base64,";
+            }
+            else if (imageFormat.Equals(ImageFormat.Png))
+            {
+                prefix = "data:image/png;base64,";
+            }
+            else
+                throw new NotSupportedException("不支持的格式类型");
+
             byte[] bytes = new byte[stream.Length];
             stream.Position = 0;
             stream.Read(bytes, 0, (int)stream.Length);
             stream.Close();
 
-            return "data:image/jpeg;base64," + Convert.ToBase64String(bytes);
+            return prefix + Convert.ToBase64String(bytes);
         }
     }
 }

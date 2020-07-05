@@ -16,7 +16,7 @@ namespace UnitTest
             var img = ImageProcessor.ReadFromFile("TestData/001.jpg");
             var watermark = ImageProcessor.ReadFromFile("TestData/watermark.png");
             var ms = ImageProcessor.AddWatermark(img, watermark);
-            string s = ImageProcessor.StreamToBase64Image(ms);
+            string s = ImageProcessor.StreamToBase64Image(ms, img.RawFormat);
 
             Assert.Equal(File.ReadAllText("TestData/base64Image.txt"), s);
         }
