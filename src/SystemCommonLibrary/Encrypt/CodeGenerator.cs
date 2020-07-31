@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace SystemCommonLibrary.Encrypt
 {
@@ -24,6 +25,24 @@ namespace SystemCommonLibrary.Encrypt
             }
             //返回格式化后的hash
             return string.Format(new string(c));
+        }
+
+        /// <summary>
+        /// 生成指定length的随机字符串（A-Z，a-z，0-9）
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static string GetRandomString(int length)
+        {
+            var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            Random random = new Random();
+            var sb = new StringBuilder();
+            for (int i = 0; i < length; i++)
+            {
+                int index = random.Next(0, str.Length - 1);
+                sb.Append(str[index]);
+            }
+            return sb.ToString();
         }
     }
 }

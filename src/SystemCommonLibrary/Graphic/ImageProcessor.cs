@@ -15,7 +15,7 @@ namespace SystemCommonLibrary.Graphic
     {
         public static Image ReadFromFile(string filename)
         {
-            return new Bitmap(filename);        
+            return new Bitmap(filename);
         }
 
         public static MemoryStream AddWatermark(Image bitmap, Image watermark)
@@ -65,6 +65,17 @@ namespace SystemCommonLibrary.Graphic
             stream.Close();
 
             return prefix + Convert.ToBase64String(bytes);
+        }
+
+
+        public static Image Base64ToImage(string base64String)
+        {
+            byte[] imageBytes = Convert.FromBase64String(base64String);
+            MemoryStream ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
+            ms.Write(imageBytes, 0, imageBytes.Length);
+            var image = Image.FromStream(ms, true);
+
+            return image;
         }
     }
 }
