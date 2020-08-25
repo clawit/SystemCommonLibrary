@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Copyright>clawit.com</Copyright>
-    <Version>0.4.2.0</Version>
+    <Version>0.4.2.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,10 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SystemCommonLibrary\SystemCommonLibrary.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Helper\" />
   </ItemGroup>
 
 </Project>

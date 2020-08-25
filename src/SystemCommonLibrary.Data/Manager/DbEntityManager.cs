@@ -15,7 +15,7 @@ namespace SystemCommonLibrary.Data.Manager
             string sql = GenInsertSql(type, entity, out bool hasIdentity);
             if (hasIdentity)
             {
-                var id = await SqlServerHelper.ExecuteScalarAsync(db, sql);
+                var id = await SqlHelper.ExecuteScalarAsync(type, db, sql);
                 var columns = typeof(T).GetProperties();
                 foreach (var column in columns)
                 {
@@ -31,7 +31,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
             else 
             {
-                return await SqlServerHelper.ExecuteNonQueryAsync(db, sql);
+                return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
             }
         }
 
@@ -39,7 +39,7 @@ namespace SystemCommonLibrary.Data.Manager
         {
             string sql = GenExistSql<T>(type, key, keyVal);
 
-            object result = await SqlServerHelper.ExecuteScalarAsync(db, sql);
+            object result = await SqlHelper.ExecuteScalarAsync(type, db, sql);
             return result.ToString() != "0";
         }
 
@@ -47,20 +47,20 @@ namespace SystemCommonLibrary.Data.Manager
         {
             string sql = GenUpdateSql(type, entity, key, keyVal);
 
-            return await SqlServerHelper.ExecuteNonQueryAsync(db, sql);
+            return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
         }
 
         public static async Task<int> Update<T>(DbType type, string db, T entity)
         {
             string sql = GenUpdateSql(type, entity);
 
-            return await SqlServerHelper.ExecuteNonQueryAsync(db, sql);
+            return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
         }
 
         public static async Task<T> SelectOne<T>(DbType type, string db, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
-            var result = await SqlServerHelper.QueryAsync<T>(db, sql);
+            var result = await SqlHelper.QueryAsync<T>(type, db, sql);
 
             if (result.Count() == 1)
             {
@@ -75,18 +75,18 @@ namespace SystemCommonLibrary.Data.Manager
         public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
-            return await Select<T>(db, sql);
+            return await Select<T>(type, db, sql);
         }
 
         public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, Dictionary<string, object> keyVals)
         {
             string sql = GenSelectSql<T>(type, keyVals);
-            return await Select<T>(db, sql);
+            return await Select<T>(type, db, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(string db, string sql)
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string sql)
         {
-            return await SqlServerHelper.QueryAsync<T>(db, sql);
+            return await SqlHelper.QueryAsync<T>(type, db, sql);
         }
 
         #region Private Methods
