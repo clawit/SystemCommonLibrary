@@ -57,6 +57,11 @@ namespace SystemCommonLibrary.Data.Manager
             return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
         }
 
+        public static async Task<int> Update<T>(DbType type, string db, string sql)
+        {
+            return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
+        }
+
         public static async Task<T> SelectOne<T>(DbType type, string db, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
@@ -70,6 +75,31 @@ namespace SystemCommonLibrary.Data.Manager
             {
                 return default(T);
             }
+        }
+
+        public static async Task<T> SelectOne<T>(DbType type, string db, string sql)
+        {
+            var result = await SqlHelper.QueryAsync<T>(type, db, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static async Task<object> SelectScalar<T>(DbType type, string db, string sql)
+        {
+            return await SqlHelper.ExecuteScalarAsync(type, db, sql);
+        }
+
+        public static async Task<object> SelectScalar<T>(DbType type, string db, string col, Dictionary<string, object> keyVals)
+        {
+            var sql = GenScalaSql<T>(type, col, keyVals);
+            return await SqlHelper.ExecuteScalarAsync(type, db, sql);
         }
 
         public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string key, object keyVal)
@@ -101,6 +131,14 @@ namespace SystemCommonLibrary.Data.Manager
         {
             var where = keyVals.Select(kv => $"{kv.Key}={FormatValue(type, kv.Value)} ");
             string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)} where {string.Join("and ", where)}";
+            Console.WriteLine(sql);
+            return sql;
+        }
+
+        private static string GenScalaSql<T>(DbType type, string col, Dictionary<string, object> keyVals)
+        {
+            var where = keyVals.Select(kv => $"{kv.Key}={FormatValue(type, kv.Value)} ");
+            string sql = $"select {col} from {QuoteKeyword(type, typeof(T).Name)} where {string.Join("and ", where)}";
             Console.WriteLine(sql);
             return sql;
         }
