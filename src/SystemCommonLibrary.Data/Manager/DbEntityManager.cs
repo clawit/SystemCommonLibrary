@@ -57,7 +57,7 @@ namespace SystemCommonLibrary.Data.Manager
             return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
         }
 
-        public static async Task<int> Update<T>(DbType type, string db, string sql)
+        public static async Task<int> Update(DbType type, string db, string sql)
         {
             return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
         }
@@ -91,7 +91,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<object> SelectScalar<T>(DbType type, string db, string sql)
+        public static async Task<object> SelectScalar(DbType type, string db, string sql)
         {
             return await SqlHelper.ExecuteScalarAsync(type, db, sql);
         }
