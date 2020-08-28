@@ -14,11 +14,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         {
             var prvlg = PrvlgReader.Read(privilege);
 
-            if (prvlg == null || string.IsNullOrEmpty(prvlg.Name) || string.IsNullOrEmpty(prvlg.Prvlg))
-                return false;
-            else
-                return checkPrvlg(prvlg.Name, prvlg.Prvlg);
-
+            return checkPrvlg(prvlg?.Name, prvlg?.Prvlg);
         }
 
     }
