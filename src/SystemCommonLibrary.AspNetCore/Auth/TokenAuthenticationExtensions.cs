@@ -9,16 +9,16 @@ namespace SystemCommonLibrary.AspNetCore.Auth
 {
     public static class TokenAuthenticationExtensions
     {
-        public static AuthenticationBuilder AddTokenAuthentication(this IServiceCollection services, string scheme, 
+        public static AuthenticationBuilder AddTokenAuthentication(this IServiceCollection services,  
             Func<int, string, HttpClientType, bool> checkToken,
             Func<string, string, bool> checkPrvlg)
         {
             return services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = scheme;
-                options.DefaultChallengeScheme = scheme;
+                options.DefaultAuthenticateScheme = "Token";
+                options.DefaultChallengeScheme = "Token";
             })
-            .AddTokenAuthenticationHandler(scheme, o => {
+            .AddTokenAuthenticationHandler("Token", o => {
                 o.CheckAuth = checkToken;
                 o.CheckPrvlg = checkPrvlg;
             });
