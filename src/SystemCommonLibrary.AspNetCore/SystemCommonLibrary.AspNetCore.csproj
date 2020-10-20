@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SystemCommonLibrary.Data\SystemCommonLibrary.Data.csproj" />
     <ProjectReference Include="..\SystemCommonLibrary\SystemCommonLibrary.csproj" />
   </ItemGroup>
 

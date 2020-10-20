@@ -1,5 +1,4 @@
-﻿using Renci.SshNet.Security;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -119,11 +118,22 @@ namespace SystemCommonLibrary.Data.Manager
             return await SqlHelper.QueryAsync<T>(type, db, sql);
         }
 
+        public static async Task<int> Remove(DbType type, string db, string sql)
+        {
+            return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
+        }
+
+        public static async Task<int> Remove<T>(DbType type, string db, string key, object keyVal)
+        {
+            string sql = GenRemoveSql<T>(type, key, keyVal);
+            return await Remove(type, db, sql);
+        }
+
+
         #region Private Methods
         private static string GenSelectSql<T>(DbType type, string key, object keyVal)
         {
             string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)} where {key}={FormatValue(type, keyVal)}";
-            Console.WriteLine(sql);
             return sql;
         }
 
@@ -131,7 +141,6 @@ namespace SystemCommonLibrary.Data.Manager
         {
             var where = keyVals.Select(kv => $"{kv.Key}={FormatValue(type, kv.Value)} ");
             string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)} where {string.Join("and ", where)}";
-            Console.WriteLine(sql);
             return sql;
         }
 
@@ -139,7 +148,6 @@ namespace SystemCommonLibrary.Data.Manager
         {
             var where = keyVals.Select(kv => $"{kv.Key}={FormatValue(type, kv.Value)} ");
             string sql = $"select {col} from {QuoteKeyword(type, typeof(T).Name)} where {string.Join("and ", where)}";
-            Console.WriteLine(sql);
             return sql;
         }
 
@@ -175,14 +183,12 @@ namespace SystemCommonLibrary.Data.Manager
             {
                 sql += GetLastIdentity(type, typeof(T).Name, identityKey);
             }
-            Console.WriteLine(sql);
             return sql;
         }
 
         private static string GenExistSql<T>(DbType type, string key, object keyVal)
         {
             string sql = $"select count(1) from {QuoteKeyword(type, typeof(T).Name)} where {key} = {FormatValue(type, keyVal)}";
-            Console.WriteLine(sql);
             return sql;
         }
 
@@ -208,7 +214,6 @@ namespace SystemCommonLibrary.Data.Manager
             }
 
             string sql = $"update {QuoteKeyword(type, typeof(T).Name)} set {strUpdate.Substring(0, strUpdate.Length - 1)} where {key} = {FormatValue(type, keyVal)}";
-            Console.WriteLine(sql);
             return sql;
         }
 
@@ -240,7 +245,12 @@ namespace SystemCommonLibrary.Data.Manager
             }
 
             string sql = $"update {QuoteKeyword(type, typeof(T).Name)} set {strUpdate.Substring(0, strUpdate.Length - 1)} where {key} = {FormatValue(type, keyVal)}";
-            Console.WriteLine(sql);
+            return sql;
+        }
+
+        private static string GenRemoveSql<T>(DbType type, string key, object keyVal)
+        {
+            string sql = $"delete from {QuoteKeyword(type, typeof(T).Name)} where {key}={FormatValue(type, keyVal)}";
             return sql;
         }
 

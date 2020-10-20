@@ -220,6 +220,17 @@ namespace SystemCommonLibrary.Json
             return IsArray && (xml.Elements().ElementAtOrDefault(index) != null);
         }
 
+        public bool TryGetValue(string name, out object value)
+        {
+            value = null;
+            if (IsDefined(name))
+            {
+                return TryGet(xml.Element(name), out value);
+            }
+            else
+                return false;
+        }
+
         /// <summary>delete property</summary>
         public bool Delete(string name)
         {
