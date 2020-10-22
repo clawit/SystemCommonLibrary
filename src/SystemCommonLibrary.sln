@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemCommonLibrary.AspNetC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{0A11847A-F556-4375-B12D-F4D83CB43594}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemCommonLibrary.Data", "SystemCommonLibrary.Data\SystemCommonLibrary.Data.csproj", "{AFB619BC-3878-4953-8820-32EF665B7166}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemCommonLibrary.Data", "SystemCommonLibrary.Data\SystemCommonLibrary.Data.csproj", "{AFB619BC-3878-4953-8820-32EF665B7166}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

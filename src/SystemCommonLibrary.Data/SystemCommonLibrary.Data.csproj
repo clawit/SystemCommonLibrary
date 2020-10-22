@@ -5,8 +5,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Copyright>clawit.com</Copyright>
-    <Version>0.4.3.0</Version>
-    <AssemblyVersion>0.4.3.0</AssemblyVersion>
+    <Version>0.5.0.0</Version>
+    <AssemblyVersion>0.5.0.0</AssemblyVersion>
+    <Authors>clawit.com</Authors>
+    <Company>clawit.com</Company>
   </PropertyGroup>
 
   <ItemGroup>

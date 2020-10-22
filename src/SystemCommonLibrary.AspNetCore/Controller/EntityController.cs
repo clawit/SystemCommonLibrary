@@ -3,40 +3,52 @@ using System.Reflection;
 using System.Threading.Tasks;
 using SystemCommonLibrary.Data.DataEntity;
 using SystemCommonLibrary.Data.Manager;
+using SystemCommonLibrary.Json;
 
 namespace SystemCommonLibrary.AspNetCore.Controller
 {
-    [ApiController]
     public class EntityController<T> : ControllerBase where T : Entity
     {
-        private DbType _dbType;
-        private string _db;
+        protected DbType DbType { get; set; }
+        protected string Db { get; set; }
 
         public EntityController(DbType dbType, string db)
         {
-            _dbType = dbType;
-            _db = db;
+            DbType = dbType;
+            Db = db;
         }
 
-        [HttpGet("api/" + nameof(T) + "/{id}")]
-        public virtual async Task<IActionResult> Get(int id)
+        [HttpGet]
+        public virtual async Task<IActionResult> Get([FromRoute]int id)
         {
-            var entity = await DbEntityManager.SelectOne<T>(_dbType, _db, nameof(Entity.Id), id);
+            var entity = await DbEntityManager.SelectOne<T>(DbType, Db, nameof(Entity.Id), id);
             return Ok(entity);
         }
 
-        [HttpPost("api/" + nameof(T))]
+        [HttpPost]
         public virtual async Task<IActionResult> Post([FromBody]dynamic json)
         {
-            T entity = json.Deserialize<T>();
-            await DbEntityManager.Insert(_dbType, _db, entity);
+            T entity = default(T);
+            if (json is DynamicJson)
+            {
+                entity = json.Deserialize<T>();
+            }
+            else
+            {
+                entity = DynamicJson.Parse(json.ToString()).Deserialize<T>();
+            }
+            await DbEntityManager.Insert(DbType, Db, entity);
             return Created($"api/{nameof(T)}/{entity.Id}", entity);
         }
 
-        [HttpPatch("api/" + nameof(T) + "/{id}")]
-        public virtual async Task<IActionResult> Patch(int id, [FromBody]dynamic json)
+        [HttpPatch]
+        public virtual async Task<IActionResult> Patch([FromRoute]int id, [FromBody]dynamic json)
         {
-            var entity = await DbEntityManager.SelectOne<T>(_dbType, _db, nameof(Entity.Id), id);
+            if (!(json is DynamicJson))
+            {
+                json = DynamicJson.Parse(json.ToString());
+            }
+            var entity = await DbEntityManager.SelectOne<T>(DbType, Db, nameof(Entity.Id), id);
 
             var ps = entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in ps)
@@ -52,14 +64,14 @@ namespace SystemCommonLibrary.AspNetCore.Controller
                 }
             }
 
-            await DbEntityManager.Update(_dbType, _db, entity);
+            await DbEntityManager.Update(DbType, Db, entity);
             return Ok(entity);
         }
 
-        [HttpDelete("api/" + nameof(T) + "/{id}")]
-        public virtual async Task<IActionResult> Delete(int id)
+        [HttpDelete]
+        public virtual async Task<IActionResult> Delete([FromRoute]int id)
         {
-            await DbEntityManager.Remove<T>(_dbType, _db, nameof(Entity.Id), id);
+            await DbEntityManager.Remove<T>(DbType, Db, nameof(Entity.Id), id);
             return Ok();
         }
 
