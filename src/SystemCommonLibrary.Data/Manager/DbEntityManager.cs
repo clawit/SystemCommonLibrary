@@ -100,6 +100,11 @@ namespace SystemCommonLibrary.Data.Manager
             var sql = GenScalaSql<T>(type, col, keyVals);
             return await SqlHelper.ExecuteScalarAsync(type, db, sql);
         }
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db)
+        {
+            string sql = GenSelectSql<T>(type);
+            return await Select<T>(type, db, sql);
+        }
 
         public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string key, object keyVal)
         {
@@ -131,16 +136,21 @@ namespace SystemCommonLibrary.Data.Manager
 
 
         #region Private Methods
+        private static string GenSelectSql<T>(DbType type)
+        {
+            string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)}";
+            return sql;
+        }
         private static string GenSelectSql<T>(DbType type, string key, object keyVal)
         {
-            string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)} where {key}={FormatValue(type, keyVal)}";
+            string sql = $"{GenSelectSql<T>(type)} where {key}={FormatValue(type, keyVal)}";
             return sql;
         }
 
         private static string GenSelectSql<T>(DbType type, Dictionary<string, object> keyVals)
         {
             var where = keyVals.Select(kv => $"{kv.Key}={FormatValue(type, kv.Value)} ");
-            string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)} where {string.Join("and ", where)}";
+            string sql = $"{GenSelectSql<T>(type)} where {string.Join("and ", where)}";
             return sql;
         }
 
