@@ -1,28 +1,73 @@
 ﻿using Dapper;
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace SystemCommonLibrary.Data.Helper
 {
     public static class MySqlHelper
     {
-        public static async Task<object> ExecuteScalarAsync(string connectionString, string Sql)
+        public static async Task<object> ExecuteScalarAsync(string connectionString, string sql)
         {
-            return await MySql.Data.MySqlClient.MySqlHelper.ExecuteScalarAsync(connectionString, Sql); ;
-        }
-
-        public static async Task<int> ExecuteNonQueryAsync(string connectionString, string Sql)
-        {
-            return await MySql.Data.MySqlClient.MySqlHelper.ExecuteNonQueryAsync(connectionString, Sql); ;
-        }
-
-        public static async Task<IEnumerable<T>> QueryAsync<T>(string connectionString, string Sql)
-        {
-            using (var connection = new MySqlConnection(connectionString))
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                return await connection.QueryAsync<T>(Sql);
+                connection.Open();
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    return await command.ExecuteScalarAsync();
+                }
             }
+        }
+
+        public static async Task<int> ExecuteNonQueryAsync(string connectionString, string sql)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    return await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public static async Task<IEnumerable<T>> QueryAsync<T>(string connectionString, string sql)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                return await connection.QueryAsync<T>(sql);
+            }
+        }
+
+        public static async Task<object> ExecuteScalarAsync(IDbTransaction transaction, string sql)
+        {
+            var trans = transaction as MySqlTransaction;
+            var connection = trans.Connection;
+
+            using (MySqlCommand command = new MySqlCommand(sql, connection, trans))
+            {
+                return await command.ExecuteScalarAsync();
+            }
+        }
+
+        public static async Task<int> ExecuteNonQueryAsync(IDbTransaction transaction, string sql)
+        {
+            var trans = transaction as MySqlTransaction;
+            var connection = trans.Connection;
+            using (MySqlCommand command = new MySqlCommand(sql, connection, trans))
+            {
+                return await command.ExecuteNonQueryAsync();
+            }
+        }
+
+        public static async Task<IEnumerable<T>> QueryAsync<T>(IDbTransaction transaction, string sql)
+        {
+            var trans = transaction as MySqlTransaction;
+            var connection = trans.Connection;
+
+            return await connection.QueryAsync<T>(sql, transaction: trans);
         }
     }
 }

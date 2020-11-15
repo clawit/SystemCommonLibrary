@@ -9,6 +9,8 @@ namespace SystemCommonLibrary.Data.Manager
 {
     public static class DbEntityManager
     {
+        #region DB Methods
+
         public static async Task<int> Insert<T>(DbType type, string db, T entity)
         {
             string sql = GenInsertSql(type, entity, out bool hasIdentity);
@@ -134,6 +136,134 @@ namespace SystemCommonLibrary.Data.Manager
             return await Remove(type, db, sql);
         }
 
+        #endregion
+
+        #region Transaction Methods
+        public static async Task<int> Insert<T>(DbType type, System.Data.IDbTransaction transaction, T entity)
+        {
+            string sql = GenInsertSql(type, entity, out bool hasIdentity);
+            if (hasIdentity)
+            {
+                var id = await SqlHelper.ExecuteScalarAsync(type, transaction, sql);
+                var columns = typeof(T).GetProperties();
+                foreach (var column in columns)
+                {
+                    bool isKey = column.GetCustomAttributes(typeof(KeyAttribute), true).Length > 0;
+                    if (isKey)
+                    {
+                        column.SetValue(entity, Convert.ToInt32(id));
+                        break;
+                    }
+                }
+
+                return Convert.ToInt32(id);
+            }
+            else
+            {
+                return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
+            }
+        }
+
+        public static async Task<bool> Exist<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
+        {
+            string sql = GenExistSql<T>(type, key, keyVal);
+
+            object result = await SqlHelper.ExecuteScalarAsync(type, transaction, sql);
+            return result.ToString() != "0";
+        }
+
+        public static async Task<int> Update<T>(DbType type, System.Data.IDbTransaction transaction, T entity, string key, object keyVal)
+        {
+            string sql = GenUpdateSql(type, entity, key, keyVal);
+
+            return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
+        }
+
+        public static async Task<int> Update<T>(DbType type, System.Data.IDbTransaction transaction, T entity)
+        {
+            string sql = GenUpdateSql(type, entity);
+
+            return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
+        }
+
+        public static async Task<int> Update(DbType type, System.Data.IDbTransaction transaction, string sql)
+        {
+            return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
+        }
+
+        public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
+        {
+            string sql = GenSelectSql<T>(type, key, keyVal);
+            var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, string sql)
+        {
+            var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static async Task<object> SelectScalar(DbType type, System.Data.IDbTransaction transaction, string sql)
+        {
+            return await SqlHelper.ExecuteScalarAsync(type, transaction, sql);
+        }
+
+        public static async Task<object> SelectScalar<T>(DbType type, System.Data.IDbTransaction transaction, string col, Dictionary<string, object> keyVals)
+        {
+            var sql = GenScalaSql<T>(type, col, keyVals);
+            return await SqlHelper.ExecuteScalarAsync(type, transaction, sql);
+        }
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction)
+        {
+            string sql = GenSelectSql<T>(type);
+            return await Select<T>(type, transaction, sql);
+        }
+
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
+        {
+            string sql = GenSelectSql<T>(type, key, keyVal);
+            return await Select<T>(type, transaction, sql);
+        }
+
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, Dictionary<string, object> keyVals)
+        {
+            string sql = GenSelectSql<T>(type, keyVals);
+            return await Select<T>(type, transaction, sql);
+        }
+
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, string sql)
+        {
+            return await SqlHelper.QueryAsync<T>(type, transaction, sql);
+        }
+
+        public static async Task<int> Remove(DbType type, System.Data.IDbTransaction transaction, string sql)
+        {
+            return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
+        }
+
+        public static async Task<int> Remove<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
+        {
+            string sql = GenRemoveSql<T>(type, key, keyVal);
+            return await Remove(type, transaction, sql);
+        }
+        #endregion
 
         #region Private Methods
         private static string GenSelectSql<T>(DbType type)
