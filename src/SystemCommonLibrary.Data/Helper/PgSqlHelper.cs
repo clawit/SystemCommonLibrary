@@ -12,7 +12,7 @@ namespace SystemCommonLibrary.Data.Helper
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                 {
                     return await command.ExecuteScalarAsync();
@@ -24,7 +24,7 @@ namespace SystemCommonLibrary.Data.Helper
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
                 {
                     return await command.ExecuteNonQueryAsync();
@@ -36,7 +36,7 @@ namespace SystemCommonLibrary.Data.Helper
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 return await connection.QueryAsync<T>(sql);
             }
         }

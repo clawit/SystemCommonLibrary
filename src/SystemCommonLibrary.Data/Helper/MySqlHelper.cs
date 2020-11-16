@@ -12,7 +12,7 @@ namespace SystemCommonLibrary.Data.Helper
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     return await command.ExecuteScalarAsync();
@@ -24,7 +24,7 @@ namespace SystemCommonLibrary.Data.Helper
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     return await command.ExecuteNonQueryAsync();
@@ -36,7 +36,7 @@ namespace SystemCommonLibrary.Data.Helper
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 return await connection.QueryAsync<T>(sql);
             }
         }
