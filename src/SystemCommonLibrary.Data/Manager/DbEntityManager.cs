@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using SystemCommonLibrary.Data.Helper;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("UnitTest")]
 namespace SystemCommonLibrary.Data.Manager
 {
     public static class DbEntityManager
@@ -78,6 +80,21 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
+        public static async Task<T> SelectOne<T>(DbType type, string db, QueryFilter queryFilter)
+        {
+            string sql = GenSelectSql<T>(type) + GenFilterSql(type, queryFilter);
+            var result = await SqlHelper.QueryAsync<T>(type, db, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
         public static async Task<T> SelectOne<T>(DbType type, string db, string sql)
         {
             var result = await SqlHelper.QueryAsync<T>(type, db, sql);
@@ -117,6 +134,12 @@ namespace SystemCommonLibrary.Data.Manager
         public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, Dictionary<string, object> keyVals)
         {
             string sql = GenSelectSql<T>(type, keyVals);
+            return await Select<T>(type, db, sql);
+        }
+
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, QueryFilter queryFilter)
+        {
+            string sql = GenSelectSql<T>(type) + GenFilterSql(type, queryFilter);
             return await Select<T>(type, db, sql);
         }
 
@@ -206,6 +229,22 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
+        public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
+        {
+            string sql = GenSelectSql<T>(type) + GenFilterSql(type, queryFilter);
+            var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+
         public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, string sql)
         {
             var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
@@ -248,6 +287,12 @@ namespace SystemCommonLibrary.Data.Manager
             return await Select<T>(type, transaction, sql);
         }
 
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
+        {
+            string sql = GenSelectSql<T>(type) + GenFilterSql(type, queryFilter);
+            return await Select<T>(type, transaction, sql);
+        }
+
         public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, string sql)
         {
             return await SqlHelper.QueryAsync<T>(type, transaction, sql);
@@ -268,7 +313,7 @@ namespace SystemCommonLibrary.Data.Manager
         #region Private Methods
         private static string GenSelectSql<T>(DbType type)
         {
-            string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)}";
+            string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)} ";
             return sql;
         }
         private static string GenSelectSql<T>(DbType type, string key, object keyVal)
@@ -392,6 +437,63 @@ namespace SystemCommonLibrary.Data.Manager
         {
             string sql = $"delete from {QuoteKeyword(type, typeof(T).Name)} where {key}={FormatValue(type, keyVal)}";
             return sql;
+        }
+
+        internal static string GenFilterSql(DbType type, QueryFilter queryFilter)
+        {
+            if (queryFilter == null)
+            {
+                return string.Empty;
+            }
+            else if (queryFilter.SubFilters == null || queryFilter.SubFilters.Count == 0)
+            {
+                if (string.IsNullOrEmpty(queryFilter.Key))
+                {
+                    throw new ArgumentException();
+                }
+                var key = QuoteKeyword(type, queryFilter.Key);
+                var comparison = GenQueryComparison(queryFilter.Comparison);
+                var val = FormatValue(type, queryFilter.Value);
+
+                return $"({key} {comparison} {val})";
+            }
+            else
+            {
+                string conditions = "(";
+                for (int i = 0; i < queryFilter.SubFilters.Count; i++)
+                {
+                    var subFilter = queryFilter.SubFilters[i];
+                    if (i != 0)
+                    {
+                        conditions += $" {subFilter.Operator} ";
+                    }
+                    conditions += GenFilterSql(type, subFilter);
+                }
+                conditions += ")";
+
+                return conditions;
+            }
+        }
+
+        private static string GenQueryComparison(QueryComparison comparison)
+        {
+            switch (comparison)
+            {
+                case QueryComparison.Equal:
+                    return "=";
+                case QueryComparison.Greater:
+                    return ">";
+                case QueryComparison.Less:
+                    return "<";
+                case QueryComparison.GreaterEqual:
+                    return ">=";
+                case QueryComparison.LessEqual:
+                    return "<=";
+                case QueryComparison.NotEqual:
+                    return "<>";
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         private static string FormatValue(DbType type, object val)

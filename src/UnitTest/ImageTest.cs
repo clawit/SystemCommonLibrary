@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using SystemCommonLibrary.Attribute;
 using SystemCommonLibrary.Graphic;
-using SystemCommonLibrary.Serialization;
 using Xunit;
 
 namespace UnitTest

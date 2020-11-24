@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SystemCommonLibrary.Attribute;
 using SystemCommonLibrary.Serialization;
 using Xunit;
 
