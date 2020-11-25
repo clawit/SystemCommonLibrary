@@ -82,7 +82,12 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<T> SelectOne<T>(DbType type, string db, QueryFilter queryFilter)
         {
-            string sql = GenSelectSql<T>(type) + " where " + GenFilterSql(type, queryFilter);
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
             var result = await SqlHelper.QueryAsync<T>(type, db, sql);
 
             if (result.Count() == 1)
@@ -139,7 +144,12 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, QueryFilter queryFilter)
         {
-            string sql = GenSelectSql<T>(type) + " where " + GenFilterSql(type, queryFilter);
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
             return await Select<T>(type, db, sql);
         }
 
@@ -231,7 +241,12 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
         {
-            string sql = GenSelectSql<T>(type) + " where " + GenFilterSql(type, queryFilter);
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
             var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
 
             if (result.Count() == 1)
@@ -289,7 +304,12 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
         {
-            string sql = GenSelectSql<T>(type) + " where " + GenFilterSql(type, queryFilter);
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
             return await Select<T>(type, transaction, sql);
         }
 
