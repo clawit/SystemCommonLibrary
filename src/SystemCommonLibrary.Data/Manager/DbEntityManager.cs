@@ -82,7 +82,7 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<T> SelectOne<T>(DbType type, string db, QueryFilter queryFilter)
         {
-            string sql = GenSelectSql<T>(type) + GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type) + " where " + GenFilterSql(type, queryFilter);
             var result = await SqlHelper.QueryAsync<T>(type, db, sql);
 
             if (result.Count() == 1)
@@ -139,7 +139,7 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, QueryFilter queryFilter)
         {
-            string sql = GenSelectSql<T>(type) + GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type) + " where " + GenFilterSql(type, queryFilter);
             return await Select<T>(type, db, sql);
         }
 
@@ -231,7 +231,7 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
         {
-            string sql = GenSelectSql<T>(type) + GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type) + " where " + GenFilterSql(type, queryFilter);
             var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
 
             if (result.Count() == 1)
@@ -289,7 +289,7 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
         {
-            string sql = GenSelectSql<T>(type) + GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type) + " where " + GenFilterSql(type, queryFilter);
             return await Select<T>(type, transaction, sql);
         }
 
@@ -313,7 +313,7 @@ namespace SystemCommonLibrary.Data.Manager
         #region Private Methods
         private static string GenSelectSql<T>(DbType type)
         {
-            string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)} ";
+            string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)}";
             return sql;
         }
         private static string GenSelectSql<T>(DbType type, string key, object keyVal)
