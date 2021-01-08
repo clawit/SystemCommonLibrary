@@ -3,6 +3,7 @@ using Npgsql;
 using System;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Threading.Tasks;
 
 namespace SystemCommonLibrary.Data.Manager
@@ -24,6 +25,9 @@ namespace SystemCommonLibrary.Data.Manager
                         break;
                     case DbType.PostgreSql:
                         conn = new NpgsqlConnection(db);
+                        break;
+                    case DbType.Sqlite:
+                        conn = new SQLiteConnection(db);
                         break;
                     default:
                         throw new NotImplementedException();

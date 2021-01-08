@@ -552,6 +552,8 @@ namespace SystemCommonLibrary.Data.Manager
                     return $"[{keyword}]";
                 case DbType.PostgreSql:
                     return $"\"{keyword}\"";
+                case DbType.Sqlite:
+                    return $"`{keyword}`";
                 default:
                     return keyword;
             }
@@ -566,6 +568,8 @@ namespace SystemCommonLibrary.Data.Manager
                 case DbType.SqlServer:
                     return $"'{value}'";
                 case DbType.PostgreSql:
+                    return $"'{value}'";
+                case DbType.Sqlite:
                     return $"'{value}'";
                 default:
                     return $"'{value}'";
@@ -582,6 +586,8 @@ namespace SystemCommonLibrary.Data.Manager
                     return $";Select @@IDENTITY;";
                 case DbType.PostgreSql:
                     return $"RETURNING {key};";
+                case DbType.Sqlite:
+                    return $";Select last_insert_rowid();";
                 default:
                     return $"Select max({key}) from {QuoteKeyword(type, table)};";
             }

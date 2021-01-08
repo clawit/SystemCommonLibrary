@@ -9,6 +9,6 @@ namespace SystemCommonLibrary.Data.Manager
         MySql,
         SqlServer,
         PostgreSql,
-
+        Sqlite,
     }
 }
