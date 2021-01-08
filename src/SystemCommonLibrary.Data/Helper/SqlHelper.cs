@@ -15,12 +15,13 @@ namespace SystemCommonLibrary.Data.Helper
             switch (type)
             {
                 case DbType.MySql:
-                    return await MySqlHelper.ExecuteScalarAsync(connectionString, sql); ;
+                    return await MySqlHelper.ExecuteScalarAsync(connectionString, sql);
                 case DbType.SqlServer:
-                    return await SqlServerHelper.ExecuteScalarAsync(connectionString, sql); ;
+                    return await SqlServerHelper.ExecuteScalarAsync(connectionString, sql);
                 case DbType.PostgreSql:
-                    return await PgSqlHelper.ExecuteScalarAsync(connectionString, sql); ;
-
+                    return await PgSqlHelper.ExecuteScalarAsync(connectionString, sql);
+                case DbType.Sqlite:
+                    return await SqliteHelper.ExecuteScalarAsync(connectionString, sql);
                 default:
                     throw new NotImplementedException();
             }
@@ -34,12 +35,13 @@ namespace SystemCommonLibrary.Data.Helper
             switch (type)
             {
                 case DbType.MySql:
-                    return await MySqlHelper.ExecuteNonQueryAsync(connectionString, sql); ;
+                    return await MySqlHelper.ExecuteNonQueryAsync(connectionString, sql);
                 case DbType.SqlServer:
-                    return await SqlServerHelper.ExecuteNonQueryAsync(connectionString, sql); ;
+                    return await SqlServerHelper.ExecuteNonQueryAsync(connectionString, sql);
                 case DbType.PostgreSql:
-                    return await PgSqlHelper.ExecuteNonQueryAsync(connectionString, sql); ;
-
+                    return await PgSqlHelper.ExecuteNonQueryAsync(connectionString, sql);
+                case DbType.Sqlite:
+                    return await SqliteHelper.ExecuteNonQueryAsync(connectionString, sql);
                 default:
                     throw new NotImplementedException();
             }
@@ -53,12 +55,13 @@ namespace SystemCommonLibrary.Data.Helper
             switch (type)
             {
                 case DbType.MySql:
-                    return await MySqlHelper.QueryAsync<T>(connectionString, sql); ;
+                    return await MySqlHelper.QueryAsync<T>(connectionString, sql);
                 case DbType.SqlServer:
-                    return await SqlServerHelper.QueryAsync<T>(connectionString, sql); ;
+                    return await SqlServerHelper.QueryAsync<T>(connectionString, sql);
                 case DbType.PostgreSql:
-                    return await PgSqlHelper.QueryAsync<T>(connectionString, sql); ;
-
+                    return await PgSqlHelper.QueryAsync<T>(connectionString, sql);
+                case DbType.Sqlite:
+                    return await SqliteHelper.QueryAsync<T>(connectionString, sql);
                 default:
                     throw new NotImplementedException();
             }
@@ -72,12 +75,13 @@ namespace SystemCommonLibrary.Data.Helper
             switch (type)
             {
                 case DbType.MySql:
-                    return await MySqlHelper.ExecuteScalarAsync(transaction, sql); ;
+                    return await MySqlHelper.ExecuteScalarAsync(transaction, sql);
                 case DbType.SqlServer:
-                    return await SqlServerHelper.ExecuteScalarAsync(transaction, sql); ;
+                    return await SqlServerHelper.ExecuteScalarAsync(transaction, sql);
                 case DbType.PostgreSql:
-                    return await PgSqlHelper.ExecuteScalarAsync(transaction, sql); ;
-
+                    return await PgSqlHelper.ExecuteScalarAsync(transaction, sql);
+                case DbType.Sqlite:
+                    return await SqliteHelper.ExecuteScalarAsync(transaction, sql);
                 default:
                     throw new NotImplementedException();
             }
@@ -91,12 +95,13 @@ namespace SystemCommonLibrary.Data.Helper
             switch (type)
             {
                 case DbType.MySql:
-                    return await MySqlHelper.ExecuteNonQueryAsync(transaction, sql); ;
+                    return await MySqlHelper.ExecuteNonQueryAsync(transaction, sql);
                 case DbType.SqlServer:
-                    return await SqlServerHelper.ExecuteNonQueryAsync(transaction, sql); ;
+                    return await SqlServerHelper.ExecuteNonQueryAsync(transaction, sql);
                 case DbType.PostgreSql:
-                    return await PgSqlHelper.ExecuteNonQueryAsync(transaction, sql); ;
-
+                    return await PgSqlHelper.ExecuteNonQueryAsync(transaction, sql);
+                case DbType.Sqlite:
+                    return await SqliteHelper.ExecuteNonQueryAsync(transaction, sql);
                 default:
                     throw new NotImplementedException();
             }
@@ -110,12 +115,13 @@ namespace SystemCommonLibrary.Data.Helper
             switch (type)
             {
                 case DbType.MySql:
-                    return await MySqlHelper.QueryAsync<T>(transaction, sql); ;
+                    return await MySqlHelper.QueryAsync<T>(transaction, sql);
                 case DbType.SqlServer:
-                    return await SqlServerHelper.QueryAsync<T>(transaction, sql); ;
+                    return await SqlServerHelper.QueryAsync<T>(transaction, sql);
                 case DbType.PostgreSql:
-                    return await PgSqlHelper.QueryAsync<T>(transaction, sql); ;
-
+                    return await PgSqlHelper.QueryAsync<T>(transaction, sql);
+                case DbType.Sqlite:
+                    return await SqliteHelper.QueryAsync<T>(transaction, sql);
                 default:
                     throw new NotImplementedException();
             }
