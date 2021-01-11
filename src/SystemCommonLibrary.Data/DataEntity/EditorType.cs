@@ -4,6 +4,7 @@ namespace SystemCommonLibrary.Data.DataEntity
 {
     public enum EditorType
     {
+        None = 0, 
         Text = 1,
         Number = 2,
         Switch = 3,
