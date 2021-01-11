@@ -7,13 +7,12 @@ namespace SystemCommonLibrary.Data.DataEntity
     [AttributeUsage(AttributeTargets.Property)]
     public class EditorAttribute : Attribute
     {
-        public bool Editable { get; }
+        public bool Editable { get; } = true;
         public EditorType EditorType { get; }
 
-        public EditorAttribute(EditorType type, bool editable)
+        public EditorAttribute(EditorType type)
         {
             this.EditorType = type;
-            this.Editable = editable;
         }
     }
 }
