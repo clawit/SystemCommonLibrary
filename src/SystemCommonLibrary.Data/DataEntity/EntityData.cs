@@ -6,6 +6,6 @@ namespace SystemCommonLibrary.Data.DataEntity
 {
     public class EntityData
     {
-        public List<List<string>> Rows { get; set; } = new List<List<string>>();
+        public List<List<object>> Rows { get; set; } = new List<List<object>>();
     }
 }
