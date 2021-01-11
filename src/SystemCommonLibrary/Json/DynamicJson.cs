@@ -276,7 +276,7 @@ namespace SystemCommonLibrary.Json
             else if (elementType.BaseType == typeof(Enum))
             {
                 //modify by shy
-                return Enum.Parse(elementType, value);
+                return Enum.Parse(elementType, value.ToString());
             }
             else if (elementType == typeof(Guid))
             {
