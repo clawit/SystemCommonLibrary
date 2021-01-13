@@ -11,6 +11,7 @@ namespace SystemCommonLibrary.Data.Manager
         Less,
         GreaterEqual,
         LessEqual,
-        NotEqual
+        NotEqual,
+        Like
     }
 }
