@@ -66,10 +66,15 @@ namespace UnitTest
                             }
                         }
                     },
+                    new QueryFilter(){
+                        Key = "OpenId",
+                        Value = "oGi",
+                        Comparison = QueryComparison.Like
+                    },
                 }
             };
             sql = DbEntityManager.GenFilterSql(DbType.MySql, filter);
-            Assert.Equal("((`Name` = 'aaa') And ((`Status` <= 3) Or (`Status` > 5)))", sql);
+            Assert.Equal("((`Name` = 'aaa') And ((`Status` <= 3) Or (`Status` > 5)) And (`OpenId` like '%oGi%'))", sql);
 
         }
     }

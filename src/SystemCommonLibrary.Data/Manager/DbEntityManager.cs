@@ -473,7 +473,7 @@ namespace SystemCommonLibrary.Data.Manager
                 }
                 var key = QuoteKeyword(type, queryFilter.Key);
                 var comparison = GenQueryComparison(queryFilter.Comparison);
-                var val = FormatValue(type, queryFilter.Value);
+                var val = FormatValue(type, queryFilter.Value, queryFilter.Comparison);
 
                 return $"({key} {comparison} {val})";
             }
@@ -511,19 +511,30 @@ namespace SystemCommonLibrary.Data.Manager
                     return "<=";
                 case QueryComparison.NotEqual:
                     return "<>";
+                case QueryComparison.Like:
+                    return "like";
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private static string FormatValue(DbType type, object val)
+        private static string FormatValue(DbType type, object val, QueryComparison comparison = QueryComparison.Equal)
         {
             if (val == null)
             {
                 return $"null";
             }
             else if (val is string)
-                return QuoteString(type, $"{val}");
+            {
+                if (comparison == QueryComparison.Like)
+                {
+                    return QuoteString(type, $"%{val}%");
+                }
+                else
+                {
+                    return QuoteString(type, $"{val}");
+                }
+            }
             else if (val is int || val is long || val is float || val is double || val is decimal)
                 return $"{val}";
             else if (val is bool)
