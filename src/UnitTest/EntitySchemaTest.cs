@@ -8,14 +8,14 @@ namespace UnitTest
 {
     public class Brand : Entity
     {
-        [Editor(EditorType.Text, Required = true)]
+        [Editor(EditorType.Text, Required = true, Length = 32)]
         public string Name { get; set; }
 
         public string Icon { get; set; }
 
         public int Index { get; set; }
 
-        [Column("描述", Length = 32)]
+        [Column("描述")]
         public string Desc { get; set; }
     }
     public class EntitySchemaTest
@@ -31,8 +31,8 @@ namespace UnitTest
             Assert.True(colId.IsKey);
             Assert.True(colName.Required);
             Assert.True(colName.Editable);
+            Assert.Equal(32, colName.Length);
             Assert.Equal(EditorType.Text, colName.Editor);
-            Assert.Equal(32, colDesc.Length);
             Assert.Equal("描述", colDesc.Name);
 
         }

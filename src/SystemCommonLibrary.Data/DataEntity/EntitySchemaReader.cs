@@ -30,13 +30,13 @@ namespace SystemCommonLibrary.Data.DataEntity
                         col.Name = attrColumn.Name;
                         col.Hidden = attrColumn.Hidden;
                         col.Formatter = attrColumn.Formatter;
-                        col.Length = attrColumn.Length;
                     }
 
                     if (attrEditor != null)
                     {
                         col.Editable = attrEditor.Editable;
                         col.Editor = attrEditor.EditorType;
+                        col.Length = attrEditor.Length;
                         col.Required = attrEditor.Required;
                     }
 

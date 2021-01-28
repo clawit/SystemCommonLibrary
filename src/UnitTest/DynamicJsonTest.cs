@@ -10,13 +10,6 @@ namespace UnitTest
 {
     public class DynamicJsonTest
     {
-        [Fact]
-        public void Des_Test()
-        {
-            string json = File.ReadAllText("TestData/json.txt");
-            var schema = DynamicJson.Parse(json).Deserialize<EntitySchema>();
 
-            Assert.NotNull(schema);
-        }
     }
 }

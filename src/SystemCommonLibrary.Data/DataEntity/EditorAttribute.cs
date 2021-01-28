@@ -10,6 +10,7 @@ namespace SystemCommonLibrary.Data.DataEntity
         public bool Editable { get; set; } = true;
         public EditorType EditorType { get; }
         public bool Required { get; set; } = false;
+        public int Length { get; set; } = 0;
 
         public EditorAttribute(EditorType type)
         {
