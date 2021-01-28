@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace SystemCommonLibrary.Data.DataEntity
 {
@@ -17,23 +18,32 @@ namespace SystemCommonLibrary.Data.DataEntity
             {
                 var attrColumn = (ColumnAttribute)property.GetCustomAttributes(typeof(ColumnAttribute), true).FirstOrDefault();
                 var attrEditor = (EditorAttribute)property.GetCustomAttributes(typeof(EditorAttribute), true).FirstOrDefault();
-                if (attrColumn != null)
+                var attrKey = (KeyAttribute)property.GetCustomAttributes(typeof(KeyAttribute), true).FirstOrDefault();
+
+                if (attrColumn != null || attrEditor != null || attrKey != null)
                 {
-                    var col = new EntityColumn()
+                    var col = new EntityColumn(property.Name);
+                    schema.Columns.Add(col);
+
+                    if (attrColumn != null)
                     {
-                        Column = property.Name,
-                        Name = attrColumn.Name,
-                        Hidden = attrColumn.Hidden,
-                        Formatter = attrColumn.Formatter
-                    };
+                        col.Name = attrColumn.Name;
+                        col.Hidden = attrColumn.Hidden;
+                        col.Formatter = attrColumn.Formatter;
+                        col.Length = attrColumn.Length;
+                    }
 
                     if (attrEditor != null)
                     {
                         col.Editable = attrEditor.Editable;
                         col.Editor = attrEditor.EditorType;
+                        col.Required = attrEditor.Required;
                     }
 
-                    schema.Columns.Add(col);
+                    if (attrKey != null)
+                    {
+                        col.IsKey = true;
+                    }
                 }
             }
 

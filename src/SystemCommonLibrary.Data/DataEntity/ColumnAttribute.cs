@@ -10,6 +10,7 @@ namespace SystemCommonLibrary.Data.DataEntity
         public string Name { get; }
         public bool Hidden { get; set; } = false;
         public string Formatter { get; set; } = null;
+        public int Length { get; set; } = 0;
 
         public ColumnAttribute(string name)
         {
