@@ -4,6 +4,10 @@ namespace SystemCommonLibrary.Data.DataEntity
 {
     public class EntityColumn
     {
+        public EntityColumn()
+        {
+            
+        }
         public EntityColumn(string column)
         {
             Column = column;
