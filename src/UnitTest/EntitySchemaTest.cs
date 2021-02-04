@@ -2,10 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using SystemCommonLibrary.Data.DataEntity;
+using SystemCommonLibrary.Data.DataEntity.EditorConfig;
 using Xunit;
 
 namespace UnitTest
 {
+    public enum EnumStatus
+    {
+        [System.ComponentModel.Description("TestName")]
+        Test1 = 0,
+        Test2 = 2,
+        Test3 = 4
+    }
     public class Brand : Entity
     {
         [Editor(EditorType.Text, Required = true, Length = 32)]
@@ -17,6 +25,10 @@ namespace UnitTest
 
         [Column("描述")]
         public string Desc { get; set; }
+
+        [Column("状态")]
+        [Editor(EditorType.List)]
+        public EnumStatus Status { get; set; }
     }
     public class EntitySchemaTest
     {
@@ -27,6 +39,7 @@ namespace UnitTest
             var colId = schema.Columns.FirstOrDefault(c => c.Column == "Id");
             var colName = schema.Columns.FirstOrDefault(c => c.Column == "Name");
             var colDesc = schema.Columns.FirstOrDefault(c => c.Column == "Desc");
+            var colStatus = schema.Columns.FirstOrDefault(c => c.Column == "Status");
 
             Assert.True(colId.IsKey);
             Assert.True(colName.Required);
@@ -34,7 +47,13 @@ namespace UnitTest
             Assert.Equal(32, colName.Length);
             Assert.Equal(EditorType.Text, colName.Editor);
             Assert.Equal("描述", colDesc.Name);
-
+            Assert.Equal(EditorType.List, colStatus.Editor);
+            Assert.NotNull(colStatus.EditorConfig);
+            EditorListConfig config = (EditorListConfig)colStatus.EditorConfig;
+            Assert.Equal("TestName", config.Items[0].Name);
+            Assert.Equal(0, config.Items[0].Value);
+            Assert.Equal("Test3", config.Items[2].Name);
+            Assert.Equal(4, config.Items[2].Value);
         }
     }
 }

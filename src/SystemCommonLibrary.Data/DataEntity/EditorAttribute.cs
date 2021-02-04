@@ -11,6 +11,7 @@ namespace SystemCommonLibrary.Data.DataEntity
         public EditorType EditorType { get; }
         public bool Required { get; set; } = false;
         public int Length { get; set; } = 0;
+        public IEditorConfig EditorConfig { get; set; } = null;
 
         public EditorAttribute(EditorType type)
         {

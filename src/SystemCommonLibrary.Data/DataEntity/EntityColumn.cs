@@ -22,5 +22,8 @@ namespace SystemCommonLibrary.Data.DataEntity
         public bool IsKey { get; set; } = false;
         public int Length { get; set; } = 0;
         public bool Required { get; set; } = false;
+
+        public IEditorConfig EditorConfig { get; set; } = null;
+
     }
 }
