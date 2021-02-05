@@ -42,10 +42,5 @@ namespace SystemCommonLibrary.Data.DataEntity
         /// 精确到小数位数
         /// </summary>
         public int Scale { get; set; } = 0;
-        /// <summary>
-        /// 单次调整值的步进
-        /// </summary>
-        public decimal Step { get; set; } = 0;
-
     }
 }

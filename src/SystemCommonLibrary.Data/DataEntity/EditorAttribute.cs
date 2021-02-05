@@ -16,7 +16,7 @@ namespace SystemCommonLibrary.Data.DataEntity
         /// <summary>
         /// 可能的元素列表
         /// </summary>
-        public Dictionary<string, object> Items { get; set; } = null;
+        public Dictionary<string, object> Items { get; } = null;
 
         /// <summary>
         /// 可能的最小值
@@ -31,10 +31,6 @@ namespace SystemCommonLibrary.Data.DataEntity
         /// 精确到小数位数
         /// </summary>
         public int Scale { get; set; } = 0;
-        /// <summary>
-        /// 单次调整值的步进
-        /// </summary>
-        public decimal Step { get; set; } = 0;
 
         public EditorAttribute(EditorType type, string items=null)
         {

@@ -43,7 +43,6 @@ namespace SystemCommonLibrary.Data.DataEntity
                         col.Min = attrEditor.Min;
                         col.Max = attrEditor.Max;
                         col.Scale = attrEditor.Scale;
-                        col.Step = attrEditor.Step;
                     }
 
                     if (attrKey != null)
