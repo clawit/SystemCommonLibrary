@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using SystemCommonLibrary.Data.DataEntity;
-using SystemCommonLibrary.Data.DataEntity.EditorConfig;
 using Xunit;
 
 namespace UnitTest
@@ -29,6 +26,10 @@ namespace UnitTest
         [Column("状态")]
         [Editor(EditorType.List)]
         public EnumStatus Status { get; set; }
+
+        [Column("状态")]
+        [Editor(EditorType.Checkbox, "{{name1:0},{name2:2}}")]
+        public EnumStatus Check { get; set; }
     }
     public class EntitySchemaTest
     {
@@ -40,20 +41,30 @@ namespace UnitTest
             var colName = schema.Columns.FirstOrDefault(c => c.Column == "Name");
             var colDesc = schema.Columns.FirstOrDefault(c => c.Column == "Desc");
             var colStatus = schema.Columns.FirstOrDefault(c => c.Column == "Status");
+            var colCheck = schema.Columns.FirstOrDefault(c => c.Column == "Check");
 
             Assert.True(colId.IsKey);
+
             Assert.True(colName.Required);
             Assert.True(colName.Editable);
             Assert.Equal(32, colName.Length);
             Assert.Equal(EditorType.Text, colName.Editor);
+
             Assert.Equal("描述", colDesc.Name);
+
             Assert.Equal(EditorType.List, colStatus.Editor);
-            Assert.NotNull(colStatus.EditorConfig);
-            EditorListConfig config = (EditorListConfig)colStatus.EditorConfig;
-            Assert.Equal("TestName", config.Items[0].Name);
-            Assert.Equal(0, config.Items[0].Value);
-            Assert.Equal("Test3", config.Items[2].Name);
-            Assert.Equal(4, config.Items[2].Value);
+            Assert.NotNull(colStatus.Items);
+            Assert.Equal("TestName", colStatus.Items.Keys.FirstOrDefault());
+            Assert.Equal(0, colStatus.Items.Values.FirstOrDefault());
+            Assert.Equal("Test3", colStatus.Items.ElementAt(2).Key);
+            Assert.Equal(4, colStatus.Items.ElementAt(2).Value);
+
+            Assert.Equal(EditorType.Checkbox, colCheck.Editor);
+            Assert.NotNull(colCheck.Items);
+            Assert.Equal("name1", colCheck.Items.Keys.FirstOrDefault());
+            Assert.Equal(0M, colCheck.Items.Values.FirstOrDefault());
+            Assert.Equal("name2", colCheck.Items.ElementAt(1).Key);
+            Assert.Equal(2M, colCheck.Items.ElementAt(1).Value);
         }
     }
 }

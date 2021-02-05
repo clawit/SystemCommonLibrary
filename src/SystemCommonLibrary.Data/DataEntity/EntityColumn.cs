@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SystemCommonLibrary.Data.DataEntity
 {
@@ -23,7 +24,28 @@ namespace SystemCommonLibrary.Data.DataEntity
         public int Length { get; set; } = 0;
         public bool Required { get; set; } = false;
 
-        public IEditorConfig EditorConfig { get; set; } = null;
+        /// <summary>
+        /// 可能的元素列表
+        /// </summary>
+        public Dictionary<string, object> Items { get; set; } = null;
+        
+        /// <summary>
+        /// 可能的最小值
+        /// </summary>
+        public object Min { get; set; } = null;
+        /// <summary>
+        /// 可能的最大值
+        /// </summary>
+        public object Max { get; set; } = null;
+
+        /// <summary>
+        /// 精确到小数位数
+        /// </summary>
+        public int Scale { get; set; } = 0;
+        /// <summary>
+        /// 单次调整值的步进
+        /// </summary>
+        public decimal Step { get; set; } = 0;
 
     }
 }
