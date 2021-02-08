@@ -22,16 +22,18 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using SystemCommonLibrary.Reflect;
 
 namespace SystemCommonLibrary.Json
 {
     public class DynamicJson : DynamicObject
     {
+
         private enum JsonType
         {
             @string, number, boolean, @object, array, @null
         }
-
+        
         // public static methods
 
         /// <summary>from JsonSring to DynamicJson</summary>
@@ -288,7 +290,12 @@ namespace SystemCommonLibrary.Json
 
         private object DeserializeObject(Type targetType)
         {
-            var result = Activator.CreateInstance(targetType);
+            object result;
+            if (targetType == typeof(string))
+                result = Activator.CreateInstance(targetType, '\0', 0);
+            else
+                result = Activator.CreateInstance(targetType);
+
             var dict = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.CanWrite)
                 .ToDictionary(pi => pi.Name, pi => pi);
@@ -314,6 +321,24 @@ namespace SystemCommonLibrary.Json
                     array[index++] = DeserializeValue(item, elemType);
                 }
                 return array;
+            }
+            else if (targetType.IsGenericType
+                && SlimTypeInfo.DicTypes.Contains(targetType.Name))
+            {
+                //dic
+                var tinfo = SlimTypeInfo.GetOrAddInstance(targetType);
+
+                var dic = tinfo.Instance;
+                foreach (var item in xml.Elements())
+                {
+                    var kv = item.Elements().ToArray();
+                    var key = DeserializeValue(kv[0], tinfo.ArgTypes[0]);
+                    var val = DeserializeValue(kv[1], tinfo.ArgTypes[1]);
+                    
+                    tinfo.MethodInfo.Invoke(dic, new object[] { key, val });
+                }
+
+                return dic;
             }
             else // List<Foo>
             {

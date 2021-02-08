@@ -19,9 +19,9 @@ namespace SystemCommonLibrary.Reflect
 
         private static readonly ConcurrentDictionary<string, SlimTypeInfo> _instanceCache = new ConcurrentDictionary<string, SlimTypeInfo>();
 
-        public static readonly string[] ListTypes = { "List`1", "HashSet`1", "IList`1", "ISet`1", "ICollection`1", "IEnumerable`1" };
+        internal static readonly string[] ListTypes = { "List`1", "HashSet`1", "IList`1", "ISet`1", "ICollection`1", "IEnumerable`1" };
 
-        public static readonly string[] DicTypes = { "Dictionary`2", "IDictionary`2" };
+        internal static readonly string[] DicTypes = { "Dictionary`2", "IDictionary`2" };
 
         /// <summary>
         /// 添加或获取实例
