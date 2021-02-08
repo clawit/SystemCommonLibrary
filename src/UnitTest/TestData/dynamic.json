@@ -1,0 +1,40 @@
+﻿{
+  "Columns": [
+    {
+      "Column": "Name",
+      "Name": "名称",
+      "Hidden": false,
+      "Formatter": null,
+      "Editable": true,
+      "Editor": 1,
+      "IsKey": false,
+      "Length": 0,
+      "Required": true,
+      "Items": null,
+      "Min": null,
+      "Max": null,
+      "Scale": 0
+    },
+    {
+      "Column": "Status",
+      "Name": "状态",
+      "Hidden": false,
+      "Formatter": null,
+      "Editable": true,
+      "Editor": 7,
+      "IsKey": false,
+      "Length": 0,
+      "Required": false,
+      "Items": {
+        "搁置": 0,
+        "就绪": 1,
+        "处理中": 2,
+        "已处理": 3,
+        "已删除": -1
+      },
+      "Min": null,
+      "Max": null,
+      "Scale": 0
+    }
+  ]
+}

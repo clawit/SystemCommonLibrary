@@ -14,7 +14,8 @@ namespace UnitTest
         public void Deserialize_Test()
         {
             var schema = new EntitySchema();
-            schema.Columns.Add(new EntityColumn() { 
+            schema.Columns.Add(new EntityColumn()
+            {
                 Items = new Dictionary<string, object>() {
                     { "name1", 1},{ "name2", "2" }
                 }
@@ -27,6 +28,17 @@ namespace UnitTest
             Assert.Equal(1D, des.Columns[0].Items.Values.ElementAt(0));
             Assert.Equal("name2", des.Columns[0].Items.Keys.ElementAt(1));
             Assert.Equal("2", des.Columns[0].Items.Values.ElementAt(1));
+        }
+
+        [Fact]
+        public void Deserialize_Test2()
+        {
+            var str = File.ReadAllText("TestData/dynamic.json");
+            EntitySchema des = DynamicJson.Parse(str).Deserialize<EntitySchema>();
+
+            Assert.Equal("名称", des.Columns[0].Name);
+            Assert.Equal("搁置", des.Columns[1].Items.Keys.ElementAt(0));
+            Assert.Equal(0D, des.Columns[1].Items.Values.ElementAt(0));
         }
     }
 }

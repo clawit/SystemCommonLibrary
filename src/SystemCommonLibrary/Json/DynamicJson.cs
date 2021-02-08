@@ -296,16 +296,38 @@ namespace SystemCommonLibrary.Json
             else
                 result = Activator.CreateInstance(targetType);
 
-            var dict = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.CanWrite)
-                .ToDictionary(pi => pi.Name, pi => pi);
-            foreach (var item in xml.Elements())
+            if (targetType.IsGenericType
+                && SlimTypeInfo.DicTypes.Contains(targetType.Name))
             {
-                PropertyInfo propertyInfo;
-                if (!dict.TryGetValue(item.Name.LocalName, out propertyInfo)) continue;
-                var value = DeserializeValue(item, propertyInfo.PropertyType);
-                propertyInfo.SetValue(result, value, null);
+                //dic
+                var tinfo = SlimTypeInfo.GetOrAddInstance(targetType);
+
+                result = tinfo.Instance;
+                foreach (var item in xml.Elements())
+                {
+                    var keyStr = item.Attribute("item").Value;
+                    var valStr = item.Value;
+
+                    var key = Convert.ChangeType(keyStr, tinfo.ArgTypes[0]);
+                    var val = DeserializeValue(item, tinfo.ArgTypes[1]);
+
+                    tinfo.MethodInfo.Invoke(result, new object[] { key, val });
+                }
             }
+            else
+            {
+                var dict = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(p => p.CanWrite)
+                    .ToDictionary(pi => pi.Name, pi => pi);
+                foreach (var item in xml.Elements())
+                {
+                    PropertyInfo propertyInfo;
+                    if (!dict.TryGetValue(item.Name.LocalName, out propertyInfo)) continue;
+                    var value = DeserializeValue(item, propertyInfo.PropertyType);
+                    propertyInfo.SetValue(result, value, null);
+                }
+            }
+            
             return result;
         }
 
@@ -339,6 +361,22 @@ namespace SystemCommonLibrary.Json
                 }
 
                 return dic;
+            }
+            else if (targetType.IsGenericType
+                && SlimTypeInfo.ListTypes.Contains(targetType.Name))
+            {
+                //list
+                var tinfo = SlimTypeInfo.GetOrAddInstance(targetType);
+
+                var list = tinfo.Instance;
+                foreach (var item in xml.Elements())
+                {
+                    var val = DeserializeValue(item, tinfo.ArgTypes[0]);
+
+                    tinfo.MethodInfo.Invoke(list, new object[] { val });
+                }
+
+                return list;
             }
             else // List<Foo>
             {
