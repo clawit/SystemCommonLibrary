@@ -305,13 +305,23 @@ namespace SystemCommonLibrary.Json
                 result = tinfo.Instance;
                 foreach (var item in xml.Elements())
                 {
-                    var keyStr = item.Attribute("item").Value;
-                    var valStr = item.Value;
+                    if (item.Attribute("item") != null)
+                    {
+                        var keyStr = item.Attribute("item").Value;
+                        var valStr = item.Value;
 
-                    var key = Convert.ChangeType(keyStr, tinfo.ArgTypes[0]);
-                    var val = DeserializeValue(item, tinfo.ArgTypes[1]);
+                        var key = Convert.ChangeType(keyStr, tinfo.ArgTypes[0]);
+                        var val = DeserializeValue(item, tinfo.ArgTypes[1]);
 
-                    tinfo.MethodInfo.Invoke(result, new object[] { key, val });
+                        tinfo.MethodInfo.Invoke(result, new object[] { key, val });
+                    }
+                    else
+                    {
+                        var key = Convert.ChangeType(item.Name.LocalName, tinfo.ArgTypes[0]);
+                        var val = DeserializeValue(item, tinfo.ArgTypes[1]);
+
+                        tinfo.MethodInfo.Invoke(result, new object[] { key, val });
+                    }
                 }
             }
             else

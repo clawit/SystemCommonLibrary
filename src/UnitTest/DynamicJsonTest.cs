@@ -40,5 +40,17 @@ namespace UnitTest
             Assert.Equal("搁置", des.Columns[1].Items.Keys.ElementAt(0));
             Assert.Equal(0D, des.Columns[1].Items.Values.ElementAt(0));
         }
+
+        [Fact]
+        public void Deserialize_Test3()
+        {
+            var str = File.ReadAllText("TestData/dynamic2.json");
+            EntitySchema des = DynamicJson.Parse(str).Deserialize<EntitySchema>();
+
+            Assert.Equal("活动名称", des.Columns[0].Name);
+            Assert.Equal("Discount", des.Columns[2].Items.Keys.ElementAt(0));
+            Assert.Equal(1D, des.Columns[2].Items.Values.ElementAt(0));
+
+        }
     }
 }
