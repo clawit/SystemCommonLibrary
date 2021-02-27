@@ -7,11 +7,15 @@ namespace SystemCommonLibrary.Data.Helper
 {
     public static class SqlHelper
     {
+        public static bool DebugMode { get; set; } = false;
+
         public static async Task<object> ExecuteScalarAsync(DbType type, string connectionString, string sql)
         {
-#if DEBUG
-            Console.WriteLine(sql);
-#endif
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
             switch (type)
             {
                 case DbType.MySql:
@@ -29,9 +33,11 @@ namespace SystemCommonLibrary.Data.Helper
 
         public static async Task<int> ExecuteNonQueryAsync(DbType type, string connectionString, string sql)
         {
-#if DEBUG
-            Console.WriteLine(sql);
-#endif
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
             switch (type)
             {
                 case DbType.MySql:
@@ -49,9 +55,11 @@ namespace SystemCommonLibrary.Data.Helper
 
         public static async Task<IEnumerable<T>> QueryAsync<T>(DbType type, string connectionString, string sql)
         {
-#if DEBUG
-            Console.WriteLine(sql);
-#endif
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
             switch (type)
             {
                 case DbType.MySql:
@@ -69,9 +77,11 @@ namespace SystemCommonLibrary.Data.Helper
 
         public static async Task<object> ExecuteScalarAsync(DbType type, System.Data.IDbTransaction transaction, string sql)
         {
-#if DEBUG
-            Console.WriteLine(sql);
-#endif
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
             switch (type)
             {
                 case DbType.MySql:
@@ -89,9 +99,11 @@ namespace SystemCommonLibrary.Data.Helper
 
         public static async Task<int> ExecuteNonQueryAsync(DbType type, System.Data.IDbTransaction transaction, string sql)
         {
-#if DEBUG
-            Console.WriteLine(sql);
-#endif
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
             switch (type)
             {
                 case DbType.MySql:
@@ -109,9 +121,11 @@ namespace SystemCommonLibrary.Data.Helper
 
         public static async Task<IEnumerable<T>> QueryAsync<T>(DbType type, System.Data.IDbTransaction transaction, string sql)
         {
-#if DEBUG
-            Console.WriteLine(sql);
-#endif
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
             switch (type)
             {
                 case DbType.MySql:

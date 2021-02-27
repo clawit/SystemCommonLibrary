@@ -526,6 +526,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
             else if (val is string)
             {
+                val = EscapeQuote(type, (string)val);
                 if (comparison == QueryComparison.Like)
                 {
                     return QuoteString(type, $"%{val}%");
@@ -603,6 +604,32 @@ namespace SystemCommonLibrary.Data.Manager
                     return $"Select max({key}) from {QuoteKeyword(type, table)};";
             }
         }
+
+        private static string EscapeQuote(DbType type, string value)
+        {
+            switch (type)
+            {
+                case DbType.MySql:
+                    value = value.Replace("\\", "\\\\")
+                        .Replace("\"", "\\\"")
+                        .Replace("\'", "\\\'");
+                    break;
+                case DbType.SqlServer:
+                    value = value.Replace("\'", "\'\'");
+                    break;
+                case DbType.PostgreSql:
+                    value = value.Replace("\'", "\'\'");
+                    break;
+                case DbType.Sqlite:
+                    value = value.Replace("\'", "\'\'");
+                    break;
+                default:
+                    break;
+            }
+
+            return value;
+        }
+        
         #endregion
     }
 }
