@@ -114,6 +114,12 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
+        public static async Task<T> SelectOne<T>(DbType type, string db, Dictionary<string, object> keyVals)
+        {
+            string sql = GenSelectSql<T>(type, keyVals);
+            return await SelectOne<T>(type, db, sql);
+        }
+
         public static async Task<object> SelectScalar(DbType type, string db, string sql)
         {
             return await SqlHelper.ExecuteScalarAsync(type, db, sql);
@@ -259,7 +265,6 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-
         public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, string sql)
         {
             var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
@@ -272,6 +277,12 @@ namespace SystemCommonLibrary.Data.Manager
             {
                 return default(T);
             }
+        }
+
+        public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, Dictionary<string, object> keyVals)
+        {
+            string sql = GenSelectSql<T>(type, keyVals);
+            return await SelectOne<T>(type, transaction, sql);
         }
 
         public static async Task<object> SelectScalar(DbType type, System.Data.IDbTransaction transaction, string sql)
