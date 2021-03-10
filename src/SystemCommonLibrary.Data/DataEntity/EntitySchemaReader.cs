@@ -20,8 +20,10 @@ namespace SystemCommonLibrary.Data.DataEntity
                 var attrColumn = (ColumnAttribute)property.GetCustomAttributes(typeof(ColumnAttribute), true).FirstOrDefault();
                 var attrEditor = (EditorAttribute)property.GetCustomAttributes(typeof(EditorAttribute), true).FirstOrDefault();
                 var attrKey = (KeyAttribute)property.GetCustomAttributes(typeof(KeyAttribute), true).FirstOrDefault();
+                var attrEntityKey = (EntityKeyAttribute)property.GetCustomAttributes(typeof(EntityKeyAttribute), true).FirstOrDefault();
 
-                if (attrColumn != null || attrEditor != null || attrKey != null)
+                if (attrColumn != null || attrEditor != null 
+                    || attrKey != null || attrEntityKey != null)
                 {
                     var col = new EntityColumn(property.Name);
                     schema.Columns.Add(col);
@@ -48,6 +50,10 @@ namespace SystemCommonLibrary.Data.DataEntity
                     if (attrKey != null)
                     {
                         col.IsKey = true;
+                    }
+                    if (attrEntityKey != null)
+                    {
+                        col.IsEntityKey = true;
                     }
                 }
             }

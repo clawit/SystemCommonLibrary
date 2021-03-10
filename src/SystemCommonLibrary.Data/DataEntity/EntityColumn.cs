@@ -21,6 +21,7 @@ namespace SystemCommonLibrary.Data.DataEntity
         public bool Editable { get; set; }
         public EditorType Editor { get; set; }
         public bool IsKey { get; set; } = false;
+        public bool IsEntityKey { get; set; } = false;
         public int Length { get; set; } = 0;
         public bool Required { get; set; } = false;
 
