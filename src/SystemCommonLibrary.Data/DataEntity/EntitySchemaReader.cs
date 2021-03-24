@@ -21,9 +21,11 @@ namespace SystemCommonLibrary.Data.DataEntity
                 var attrEditor = (EditorAttribute)property.GetCustomAttributes(typeof(EditorAttribute), true).FirstOrDefault();
                 var attrKey = (KeyAttribute)property.GetCustomAttributes(typeof(KeyAttribute), true).FirstOrDefault();
                 var attrEntityKey = (EntityKeyAttribute)property.GetCustomAttributes(typeof(EntityKeyAttribute), true).FirstOrDefault();
+                var attrForeign = (ForeignAttribute)property.GetCustomAttributes(typeof(ForeignAttribute), true).FirstOrDefault();
 
                 if (attrColumn != null || attrEditor != null 
-                    || attrKey != null || attrEntityKey != null)
+                    || attrKey != null || attrEntityKey != null
+                    || attrForeign != null)
                 {
                     var col = new EntityColumn(property.Name);
                     schema.Columns.Add(col);
@@ -51,9 +53,19 @@ namespace SystemCommonLibrary.Data.DataEntity
                     {
                         col.IsKey = true;
                     }
+
                     if (attrEntityKey != null)
                     {
                         col.IsEntityKey = true;
+                    }
+
+                    if (attrForeign != null)
+                    {
+                        col.Foreign = new ForeignEntity() {
+                            On = attrForeign.Foreign,
+                            Key = attrForeign.Key,
+                            Display = attrForeign.Display
+                        };
                     }
                 }
             }

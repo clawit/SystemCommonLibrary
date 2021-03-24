@@ -7,7 +7,7 @@ namespace SystemCommonLibrary.Data.DataEntity
     {
         public EntityColumn()
         {
-            
+
         }
         public EntityColumn(string column)
         {
@@ -29,7 +29,7 @@ namespace SystemCommonLibrary.Data.DataEntity
         /// 可能的元素列表
         /// </summary>
         public Dictionary<string, object> Items { get; set; } = null;
-        
+
         /// <summary>
         /// 可能的最小值
         /// </summary>
@@ -43,5 +43,7 @@ namespace SystemCommonLibrary.Data.DataEntity
         /// 精确到小数位数
         /// </summary>
         public int Scale { get; set; } = 0;
+
+        public ForeignEntity Foreign { get; set; } = null;
     }
 }
