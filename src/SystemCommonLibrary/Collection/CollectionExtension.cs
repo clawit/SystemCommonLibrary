@@ -19,12 +19,12 @@ namespace SystemCommonLibrary.Collection
             }
         }
 
-        public static bool NotNullOrEmpty<T>(this IEnumerable<T> collection)
+        public static bool NotEmpty<T>(this IEnumerable<T> collection)
         {
             return collection != null && collection.Any();
         }
 
-        public static bool IsNullOrEmpty<T>(this IEnumerable<T> collection) => !collection.NotNullOrEmpty();
+        public static bool IsEmpty<T>(this IEnumerable<T> collection) => !collection.NotEmpty();
 
     }
 }
