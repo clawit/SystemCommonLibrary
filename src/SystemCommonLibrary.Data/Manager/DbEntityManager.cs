@@ -65,6 +65,22 @@ namespace SystemCommonLibrary.Data.Manager
             return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
         }
 
+        public static async Task<int> SelectCount<T>(DbType type, string db, QueryFilter queryFilter)
+        {
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectCountSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
+            var count = await SelectScalar(type, db, sql);
+
+            int result = -1;
+            int.TryParse(count.ToString(), out result);
+
+            return result;
+        }
+
         public static async Task<T> SelectOne<T>(DbType type, string db, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
@@ -230,6 +246,22 @@ namespace SystemCommonLibrary.Data.Manager
             return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
         }
 
+        public static async Task<int> SelectCount<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
+        {
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectCountSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
+            var count = await SelectScalar(type, transaction, sql);
+
+            int result = -1;
+            int.TryParse(count.ToString(), out result);
+
+            return result;
+        }
+
         public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
@@ -347,6 +379,13 @@ namespace SystemCommonLibrary.Data.Manager
             string sql = $"select * from {QuoteKeyword(type, typeof(T).Name)}";
             return sql;
         }
+
+        private static string GenSelectCountSql<T>(DbType type)
+        {
+            string sql = $"select Count(*) from {QuoteKeyword(type, typeof(T).Name)}";
+            return sql;
+        }
+
         private static string GenSelectSql<T>(DbType type, string key, object keyVal)
         {
             string sql = $"{GenSelectSql<T>(type)} where {key}={FormatValue(type, keyVal)}";
