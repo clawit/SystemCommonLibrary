@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using SystemCommonLibrary.Network;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
@@ -33,15 +33,18 @@ namespace SystemCommonLibrary.AspNetCore.Auth
             return builder.AddScheme<TokenAuthenticationOptions, TokenAuthenticationHandler>(authenticationScheme, configureOptions);
         }
 
-        public static void AddMvcTokenAuthentication(this IServiceCollection services,
-            Func<int, string, HttpClientType, bool> checkToken, 
+        public static void AddMvcTokenAuthentication(this IServiceCollection services)
+        {
+            services.AddScoped<AuthorizeActionFilter>();
+        }
+
+        public static void UseMvcTokenAuthentication(this IApplicationBuilder builder,
+            Func<int, string, HttpClientType, Task<bool>> checkToken,
             string prefix = "Token", AuthType authType = AuthType.Internal)
         {
             AuthConst.AuthPrefix = prefix;
             AuthConst.AuthType = authType;
-            AuthConst.TokenAuthenticationOptions.CheckAuth = checkToken;
-
-            services.AddScoped<AuthorizeActionFilter>();
+            AuthConst.CheckAuth = checkToken;
         }
     }
 }

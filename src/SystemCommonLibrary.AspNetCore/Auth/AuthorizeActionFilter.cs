@@ -22,7 +22,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     var authorizations = Base64Encrypt.FromBase64(authorization).Split(":");
                     if (authorizations.Length == 2
                         && int.TryParse(authorizations[0], out int id)
-                        && AuthConst.TokenAuthenticationOptions.CheckAuth(id, authorizations[1], HttpClientReader.Read(agents)))
+                        && await AuthConst.CheckAuth(id, authorizations[1], HttpClientReader.Read(agents)))
                     {
                         await next();
                     }

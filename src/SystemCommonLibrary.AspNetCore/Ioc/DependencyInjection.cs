@@ -14,6 +14,20 @@ namespace SystemCommonLibrary.AspNetCore.IoC
         private readonly static Type autowiredAttributeType = typeof(AutowiredAttribute);
 
         /// <summary>
+        /// 获取属性依赖注入完整的服务实例
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        public static T GetRequiredService<T>(IServiceProvider serviceProvider)
+        {
+            var service = serviceProvider.GetRequiredService<T>();
+            Resolve(serviceProvider, service);
+
+            return service;
+        }
+
+        /// <summary>
         /// 属性依赖注入
         /// </summary>
         /// <typeparam name="T"></typeparam>

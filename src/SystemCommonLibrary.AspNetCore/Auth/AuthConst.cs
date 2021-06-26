@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using SystemCommonLibrary.Network;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
 {
@@ -7,9 +9,9 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         public const string AuthKey = "authorization";
         public const string UserAgentKey = "User-Agent";
 
-        internal static string AuthPrefix = "Token";
-        internal static string ApiAuthPrefix = "ApiToken";
-        internal static AuthType AuthType = AuthType.Internal;
-        internal static TokenAuthenticationOptions TokenAuthenticationOptions = new TokenAuthenticationOptions();
+        internal static string AuthPrefix;
+        internal static string ApiAuthPrefix;
+        internal static AuthType AuthType;
+        internal static Func<int, string, HttpClientType, Task<bool>> CheckAuth;
     }
 }
