@@ -13,5 +13,6 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         internal static string ApiAuthPrefix;
         internal static AuthType AuthType;
         internal static Func<int, string, HttpClientType, Task<bool>> CheckAuth;
+        internal static string LoginUrl;
     }
 }

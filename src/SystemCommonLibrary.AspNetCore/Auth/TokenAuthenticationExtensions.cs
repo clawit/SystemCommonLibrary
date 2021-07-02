@@ -40,11 +40,12 @@ namespace SystemCommonLibrary.AspNetCore.Auth
 
         public static void UseMvcTokenAuthentication(this IApplicationBuilder builder,
             Func<int, string, HttpClientType, Task<bool>> checkToken,
-            string prefix = "Token", AuthType authType = AuthType.Internal)
+            string loginUrl, string prefix = "Token", AuthType authType = AuthType.Internal)
         {
             AuthConst.AuthPrefix = prefix;
             AuthConst.AuthType = authType;
             AuthConst.CheckAuth = checkToken;
+            AuthConst.LoginUrl = loginUrl;
         }
     }
 }

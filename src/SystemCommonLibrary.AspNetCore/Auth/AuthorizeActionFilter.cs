@@ -27,10 +27,10 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                         await next();
                     }
                     else
-                        context.Result = new UnauthorizedResult();
+                        context.Result = new RedirectResult(AuthConst.LoginUrl);
                 }
                 else
-                    context.Result = new UnauthorizedResult();
+                    context.Result = new RedirectResult(AuthConst.LoginUrl);
             }
             else
                 throw new NotImplementedException();
