@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
-using SystemCommonLibrary.Network;
+using SystemCommonLibrary.Enums;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
 {

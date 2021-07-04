@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SystemCommonLibrary.Data.DataEntity
+namespace SystemCommonLibrary.Enums
 {
     public enum EditorType
     {

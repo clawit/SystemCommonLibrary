@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using SystemCommonLibrary.Enums;
 using SystemCommonLibrary.Reflect;
 
 namespace SystemCommonLibrary.Data.DataEntity

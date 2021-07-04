@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Threading.Tasks;
+using SystemCommonLibrary.Enums;
 
 namespace SystemCommonLibrary.Data.Manager
 {

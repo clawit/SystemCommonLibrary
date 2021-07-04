@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SystemCommonLibrary.Geo
+namespace SystemCommonLibrary.Enums
 {
     /// <summary>
     /// An enumeration of all ISO 3166 country codes.

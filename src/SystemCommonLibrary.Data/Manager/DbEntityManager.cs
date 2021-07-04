@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using SystemCommonLibrary.Data.Helper;
-using System.Runtime.CompilerServices;
+using SystemCommonLibrary.Enums;
 
 [assembly: InternalsVisibleTo("UnitTest")]
 namespace SystemCommonLibrary.Data.Manager

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SystemCommonLibrary.Network;
+using SystemCommonLibrary.Enums;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
 {

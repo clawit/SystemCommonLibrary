@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using SystemCommonLibrary.Enums;
 
 namespace SystemCommonLibrary.Data.DataEntity
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace SystemCommonLibrary.AspNetCore.Auth
+namespace SystemCommonLibrary.Enums
 {
     public enum AuthType
     {

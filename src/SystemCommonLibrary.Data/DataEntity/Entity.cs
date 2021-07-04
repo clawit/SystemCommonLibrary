@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using SystemCommonLibrary.Enums;
 
 namespace SystemCommonLibrary.Data.DataEntity
 {

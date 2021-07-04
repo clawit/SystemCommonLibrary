@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using SystemCommonLibrary.Data.DataEntity;
+using SystemCommonLibrary.Enums;
 using Xunit;
 
 namespace UnitTest

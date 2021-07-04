@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Threading.Tasks;
 using SystemCommonLibrary.Encrypt;
+using SystemCommonLibrary.Enums;
 using SystemCommonLibrary.IoC.Attributes;
 using SystemCommonLibrary.Network;
 

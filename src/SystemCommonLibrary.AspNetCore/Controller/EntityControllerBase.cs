@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using SystemCommonLibrary.Data.DataEntity;
 using SystemCommonLibrary.Data.Manager;
+using SystemCommonLibrary.Enums;
 using SystemCommonLibrary.Json;
 
 namespace SystemCommonLibrary.AspNetCore.Controller

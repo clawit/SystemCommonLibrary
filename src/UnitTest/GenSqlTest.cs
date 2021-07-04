@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using SystemCommonLibrary.Data.Manager;
+using SystemCommonLibrary.Enums;
 using Xunit;
 
 namespace UnitTest

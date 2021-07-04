@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using SystemCommonLibrary.Enums;
 using SystemCommonLibrary.Network;
 using SystemCommonLibrary.Network.Valid;
 
