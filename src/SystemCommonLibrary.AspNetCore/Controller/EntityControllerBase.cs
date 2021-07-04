@@ -8,6 +8,7 @@ using SystemCommonLibrary.Json;
 
 namespace SystemCommonLibrary.AspNetCore.Controller
 {
+    [ApiController]
     public class EntityControllerBase<T> : ControllerBase where T : Entity
     {
         protected DbType DbType { get; set; }
