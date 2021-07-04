@@ -20,6 +20,13 @@ namespace SystemCommonLibrary.AspNetCore.Controller
         }
 
         [HttpGet]
+        public virtual IActionResult Schema()
+        {
+            var schema = EntitySchemaReader.GetSchema<T>();
+            return Ok(schema);
+        }
+
+        [HttpGet]
         public virtual async Task<IActionResult> Get([FromRoute]int id)
         {
             var entity = await DbEntityManager.SelectOne<T>(DbType, Db, nameof(Entity.Id), id);
