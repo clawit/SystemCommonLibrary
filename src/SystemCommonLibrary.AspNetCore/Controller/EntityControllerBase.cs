@@ -26,6 +26,14 @@ namespace SystemCommonLibrary.AspNetCore.Controller
             return Ok(entity);
         }
 
+        [HttpGet]
+        public virtual async Task<IActionResult> Query()
+        {
+            var query = QueryFilterHeler.Convert<T>(Request.Query);
+            var entities = await DbEntityManager.Select<T>(DbType, Db, query);
+            return Ok(entities);
+        }
+
         [HttpPost]
         public virtual async Task<IActionResult> Post([FromBody]dynamic json)
         {
