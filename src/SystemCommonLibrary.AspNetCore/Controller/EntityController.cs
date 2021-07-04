@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using SystemCommonLibrary.Data.DataEntity;
@@ -38,11 +39,11 @@ namespace SystemCommonLibrary.AspNetCore.Controller
                 entity = DynamicJson.Parse(json.ToString()).Deserialize<T>();
             }
             await DbEntityManager.Insert(DbType, Db, entity);
-            return Created($"api/{nameof(T)}/{entity.Id}", entity);
+            return Created($"api/{typeof(T).Name}/{entity.Id}", entity);
         }
 
-        [HttpPatch]
-        public virtual async Task<IActionResult> Patch([FromRoute]int id, [FromBody]dynamic json)
+        [HttpPut]
+        public virtual async Task<IActionResult> Put([FromRoute]int id, [FromBody]dynamic json)
         {
             if (!(json is DynamicJson))
             {
@@ -53,12 +54,48 @@ namespace SystemCommonLibrary.AspNetCore.Controller
             var ps = entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in ps)
             {
-                if (property.Name != nameof(Entity.Id)
-                    && property.Name != nameof(Entity.CreateAt)
-                    && property.Name != nameof(Entity.Creator))
+                var attrEditor = property.GetCustomAttribute(typeof(EditorAttribute)) as EditorAttribute;
+                if (attrEditor != null && attrEditor.Editable)
                 {
                     if (json.TryGetValue(property.Name, out object value))
                     {
+                        if (property.PropertyType.IsEnum)
+                        {
+                            value = Enum.Parse(property.PropertyType, value.ToString());
+                        }
+                        else if (property.PropertyType == typeof(bool))
+                        {
+                            value = Convert.ToBoolean(value);
+                        }
+                        else if (property.PropertyType == typeof(short))
+                        {
+                            value = Convert.ToInt16(value);
+                        }
+                        else if (property.PropertyType == typeof(int))
+                        {
+                            value = Convert.ToInt32(value);
+                        }
+                        else if (property.PropertyType == typeof(long))
+                        {
+                            value = Convert.ToInt64(value);
+                        }
+                        else if (property.PropertyType == typeof(float))
+                        {
+                            value = Convert.ToSingle(value);
+                        }
+                        else if (property.PropertyType == typeof(double))
+                        {
+                            value = Convert.ToDouble(value);
+                        }
+                        else if (property.PropertyType == typeof(decimal))
+                        {
+                            value = Convert.ToDecimal(value);
+                        }
+                        else if (property.PropertyType == typeof(DateTime))
+                        {
+                            value = Convert.ToDateTime(value);
+                        }
+
                         property.SetValue(entity, value);
                     }
                 }
