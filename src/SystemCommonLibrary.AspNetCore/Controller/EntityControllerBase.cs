@@ -8,12 +8,12 @@ using SystemCommonLibrary.Json;
 
 namespace SystemCommonLibrary.AspNetCore.Controller
 {
-    public class EntityController<T> : ControllerBase where T : Entity
+    public class EntityControllerBase<T> : ControllerBase where T : Entity
     {
         protected DbType DbType { get; set; }
         protected string Db { get; set; }
 
-        public EntityController(DbType dbType, string db)
+        public EntityControllerBase(DbType dbType, string db)
         {
             DbType = dbType;
             Db = db;
