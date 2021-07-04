@@ -8,7 +8,6 @@ using SystemCommonLibrary.Json;
 
 namespace SystemCommonLibrary.AspNetCore.Controller
 {
-    [ApiController]
     public class EntityControllerBase<T> : ControllerBase where T : Entity
     {
         protected DbType DbType { get; set; }
@@ -28,7 +27,7 @@ namespace SystemCommonLibrary.AspNetCore.Controller
         }
 
         [HttpGet]
-        public virtual async Task<IActionResult> Get([FromRoute]int id)
+        public virtual async Task<IActionResult> Get(int id)
         {
             var entity = await DbEntityManager.SelectOne<T>(DbType, Db, nameof(Entity.Id), id);
             return Ok(entity);
@@ -43,7 +42,7 @@ namespace SystemCommonLibrary.AspNetCore.Controller
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> Post([FromBody]dynamic json)
+        public virtual async Task<IActionResult> Post(dynamic json)
         {
             T entity = default(T);
             if (json is DynamicJson)
@@ -59,7 +58,7 @@ namespace SystemCommonLibrary.AspNetCore.Controller
         }
 
         [HttpPut]
-        public virtual async Task<IActionResult> Put([FromRoute]int id, [FromBody]dynamic json)
+        public virtual async Task<IActionResult> Put(int id, dynamic json)
         {
             if (!(json is DynamicJson))
             {
@@ -122,7 +121,7 @@ namespace SystemCommonLibrary.AspNetCore.Controller
         }
 
         [HttpDelete]
-        public virtual async Task<IActionResult> Delete([FromRoute]int id)
+        public virtual async Task<IActionResult> Delete(int id)
         {
             await DbEntityManager.Remove<T>(DbType, Db, nameof(Entity.Id), id);
             return Ok();
