@@ -14,6 +14,12 @@ namespace SystemCommonLibrary.IoC.Extensions
         private static List<DependencyModel> container;
         private readonly static Type autowiredAttributeType = typeof(AutowiredAttribute);
 
+        public static void AddRegisterService(this IServiceCollection services, DependencyModel dependencyInjection)
+        {
+            AnalysisDependencyTree(new DependencyTreeModel { Dependency = dependencyInjection });
+            AddDependencyInjection(services);
+        }
+
         /// <summary>
         /// 
         /// </summary>

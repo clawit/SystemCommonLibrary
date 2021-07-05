@@ -28,6 +28,20 @@ namespace SystemCommonLibrary.AspNetCore.IoC
         }
 
         /// <summary>
+        /// 获取属性依赖注入完整的服务实例
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        public static object GetRequiredService(Type type, IServiceProvider serviceProvider)
+        {
+            var service = serviceProvider.GetRequiredService(type);
+            Resolve(serviceProvider, service);
+
+            return service;
+        }
+
+        /// <summary>
         /// 属性依赖注入
         /// </summary>
         /// <typeparam name="T"></typeparam>
