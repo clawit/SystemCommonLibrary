@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Threading.Tasks;
-using SystemCommonLibrary.Encrypt;
+using SystemCommonLibrary.Valid;
 using SystemCommonLibrary.Enums;
 using SystemCommonLibrary.IoC.Attributes;
 using SystemCommonLibrary.Network;
@@ -21,13 +21,13 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                 {
                     var agents = context.HttpContext.Request.Headers[AuthConst.UserAgentKey].ToString();
                     string authorization = context.HttpContext.Request.Headers[AuthConst.AuthKey].ToString();
-                    if (string.IsNullOrWhiteSpace(authorization))
+                    if (authorization.IsEmpty())
                     {
                         //如果header中没有读到尝试从cookie中读取
                         authorization = context.HttpContext.Request.Cookies[AuthConst.AuthKey];
                     }
                     var identity = AuthReader.Read(authorization);
-                    if (identity != null
+                    if (identity.NotNull()
                         && await AuthConst.CheckAuth(identity.Id, identity.Token, HttpClientReader.Read(agents)))
                     { 
                         await next();
