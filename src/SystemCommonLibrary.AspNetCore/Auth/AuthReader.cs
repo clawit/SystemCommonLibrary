@@ -21,7 +21,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
 
             //获取Request请求表头信息
             if (!string.IsNullOrEmpty(authorization)
-                && authorization.StartsWith("Token")
+                && authorization.StartsWith(AuthConst.AuthPrefix)
                 && authorization.IndexOf(" ") != -1)
                 authParameter = authorization.Substring(authorization.IndexOf(" "));
 
