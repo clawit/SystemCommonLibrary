@@ -10,18 +10,18 @@ namespace SystemCommonLibrary.Reflect
 {
     public static class CompilerHelper
     {
-        public static Assembly Compile(string text, params Assembly[] referencedAssemblies)
+        public static Assembly Compile(string assemblyName, string text, params Assembly[] referencedAssemblies)
         {
             var references = referencedAssemblies.Select(it => MetadataReference.CreateFromFile(it.Location));
-            var assemblyName = "_" + Guid.NewGuid().ToString("D");
             var syntaxTrees = new SyntaxTree[] { CSharpSyntaxTree.ParseText(text) };
             var compilation = CSharpCompilation.Create(assemblyName, syntaxTrees, references, GetCompilationOptions());
-            using var stream = new MemoryStream();
-            var compilationResult = compilation.Emit(stream);
+            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                                    Path.GetRandomFileName().Replace(".", string.Empty).ToLower() + ".dll"
+                                    ).Replace("\\", "/");
+            var compilationResult = compilation.Emit(file);
             if (compilationResult.Success)
             {
-                stream.Seek(0, SeekOrigin.Begin);
-                return Assembly.Load(stream.ToArray());
+                return Assembly.LoadFrom(file);
             }
             else
             {
@@ -51,7 +51,6 @@ namespace SystemCommonLibrary.Reflect
             AddGlobalSupperess("CS1998");
 
             var compilationOptions = new CSharpCompilationOptions(
-                                   //strongNameProvider: a,
                                    concurrentBuild: true,
                                    moduleName: Guid.NewGuid().ToString("D"),
                                    reportSuppressedDiagnostics: false,
