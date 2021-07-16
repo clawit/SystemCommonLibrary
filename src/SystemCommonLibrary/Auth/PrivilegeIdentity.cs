@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SystemCommonLibrary.AspNetCore.Auth
+﻿namespace SystemCommonLibrary.Auth
 {
     public class PrivilegeIdentity
     {

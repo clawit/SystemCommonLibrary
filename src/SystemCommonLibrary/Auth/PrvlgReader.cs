@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Text;
+﻿using System;
 using SystemCommonLibrary.Encrypt;
 
-namespace SystemCommonLibrary.AspNetCore.Auth
+namespace SystemCommonLibrary.Auth
 {
     /// <summary>
     /// Prvlg验证读取类

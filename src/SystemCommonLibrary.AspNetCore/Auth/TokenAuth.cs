@@ -1,4 +1,5 @@
 ﻿using System;
+using SystemCommonLibrary.Auth;
 using SystemCommonLibrary.Enums;
 using SystemCommonLibrary.Network;
 using SystemCommonLibrary.Network.Valid;
@@ -18,6 +19,10 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         {
             try
             {
+                if (!authorization.StartsWith(AuthConst.AuthPrefix))
+                {
+                    return false;
+                }
                 var auth = AuthReader.Read(authorization);
 
                 if (auth == null)

@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using SystemCommonLibrary.Auth;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
 {
@@ -15,6 +13,11 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                 return 0;
             }
             var authorization = request.Headers["Authorization"].ToString();
+            if (!authorization.StartsWith(AuthConst.AuthPrefix))
+            {
+                return 0;
+            }
+
             var identity = AuthReader.Read(authorization);
             if (identity == null)
                 return 0;

@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Text;
-using SystemCommonLibrary.Encrypt;
+﻿using SystemCommonLibrary.Encrypt;
 
-namespace SystemCommonLibrary.AspNetCore.Auth
+namespace SystemCommonLibrary.Auth
 {
     /// <summary>
     /// token验证读取类
@@ -21,7 +18,6 @@ namespace SystemCommonLibrary.AspNetCore.Auth
 
             //获取Request请求表头信息
             if (!string.IsNullOrEmpty(authorization)
-                && authorization.StartsWith(AuthConst.AuthPrefix)
                 && authorization.IndexOf(" ") != -1)
                 authParameter = authorization.Substring(authorization.IndexOf(" "));
 

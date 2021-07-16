@@ -18,7 +18,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         {
             var authorization = this.Request.Headers[AuthConst.AuthKey].ToString();
             var agents = this.Request.Headers[AuthConst.UserAgentKey].ToString();
-            var prvlg = this.Request.Headers[AuthConst.ApiAuthPrefix].ToString();
+            var prvlg = this.Request.Headers[AuthConst.ApiAuthKey].ToString();
 
             if (PrvlgAuth.Authorize(prvlg, this.Options.CheckPrvlg)
                 && TokenAuth.Authorize(authorization, agents, this.Options.CheckAuth))

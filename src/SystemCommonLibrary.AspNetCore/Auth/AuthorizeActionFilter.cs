@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Threading.Tasks;
-using SystemCommonLibrary.Valid;
+using SystemCommonLibrary.Auth;
 using SystemCommonLibrary.Enums;
 using SystemCommonLibrary.IoC.Attributes;
 using SystemCommonLibrary.Network;
+using SystemCommonLibrary.Valid;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
 {
@@ -25,6 +26,10 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     {
                         //如果header中没有读到尝试从cookie中读取
                         authorization = context.HttpContext.Request.Cookies[AuthConst.AuthKey];
+                    }
+                    if (!authorization.StartsWith(AuthConst.AuthPrefix))
+                    {
+                        context.Result = new RedirectResult(AuthConst.LoginUrl);
                     }
                     var identity = AuthReader.Read(authorization);
                     if (identity.NotNull()

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using System;
+using SystemCommonLibrary.Auth;
 using SystemCommonLibrary.Enums;
 
 namespace SystemCommonLibrary.AspNetCore.Auth

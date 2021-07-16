@@ -1,4 +1,4 @@
-﻿namespace SystemCommonLibrary.AspNetCore.Auth
+﻿namespace SystemCommonLibrary.Auth
 {
     /// <summary>
     /// token身份验证

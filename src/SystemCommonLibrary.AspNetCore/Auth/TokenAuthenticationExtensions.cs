@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using SystemCommonLibrary.Auth;
 using SystemCommonLibrary.Enums;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
@@ -11,10 +12,10 @@ namespace SystemCommonLibrary.AspNetCore.Auth
     {
         public static AuthenticationBuilder AddTokenAuthentication(this IServiceCollection services,  
             Func<TokenAuthIdentity, HttpClientType, bool> checkToken, Func<PrivilegeIdentity, bool> checkPrvlg,
-            string prefix = "Token", string apiPrefix = "ApiToken", AuthType authType = AuthType.Internal)
+            string prefix = "Token", string apiAuthKey = "ApiToken", AuthType authType = AuthType.Internal)
         {
             AuthConst.AuthPrefix = prefix;
-            AuthConst.ApiAuthPrefix = apiPrefix;
+            AuthConst.ApiAuthKey = apiAuthKey;
             AuthConst.AuthType = authType;
 
             return services.AddAuthentication(options =>

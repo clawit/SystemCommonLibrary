@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using SystemCommonLibrary.Auth;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
 {
