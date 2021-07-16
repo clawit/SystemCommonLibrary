@@ -10,11 +10,11 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         /// 权限授权
         /// </summary>
         /// < returns ></ returns >
-        public static bool Authorize(string privilege, Func<string, string, bool> checkPrvlg)
+        public static bool Authorize(string privilege, Func<PrivilegeIdentity, bool> checkPrvlg)
         {
             var prvlg = PrvlgReader.Read(privilege);
 
-            return checkPrvlg(prvlg?.Name, prvlg?.Prvlg);
+            return checkPrvlg(prvlg);
         }
 
     }

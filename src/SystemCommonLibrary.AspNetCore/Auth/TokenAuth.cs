@@ -14,7 +14,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         /// < param name="token">用户token</param>
         /// <param name = "actionContext" ></ param >
         /// < returns ></ returns >
-        public static bool Authorize(string authorization, string agents, Func<int, string, HttpClientType, bool> checkToken)
+        public static bool Authorize(string authorization, string agents, Func<TokenAuthIdentity, HttpClientType, bool> checkToken)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     if (auth.Id == 0 || !StringValid.IsEmpty(auth.Token))
                         return false;
                     else
-                        return checkToken(auth.Id, auth.Token, HttpClientReader.Read(agents));
+                        return checkToken(auth, HttpClientReader.Read(agents));
                 }
             }
             catch 

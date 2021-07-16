@@ -10,7 +10,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
     public static class TokenAuthenticationExtensions
     {
         public static AuthenticationBuilder AddTokenAuthentication(this IServiceCollection services,  
-            Func<int, string, HttpClientType, bool> checkToken, Func<string, string, bool> checkPrvlg,
+            Func<TokenAuthIdentity, HttpClientType, bool> checkToken, Func<PrivilegeIdentity, bool> checkPrvlg,
             string prefix = "Token", string apiPrefix = "ApiToken", AuthType authType = AuthType.Internal)
         {
             AuthConst.AuthPrefix = prefix;
@@ -39,7 +39,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         }
 
         public static void UseMvcTokenAuthentication(this IApplicationBuilder builder,
-            Func<int, string, HttpClientType, Task<bool>> checkToken,
+            Func<TokenAuthIdentity, HttpClientType, Task<bool>> checkToken,
             string loginUrl, string prefix = "Token", AuthType authType = AuthType.Internal)
         {
             AuthConst.AuthPrefix = prefix;

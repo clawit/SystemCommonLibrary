@@ -10,8 +10,8 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         {
         }
 
-        public Func<int, string, HttpClientType, bool> CheckAuth { get; set; }
+        public Func<TokenAuthIdentity, HttpClientType, bool> CheckAuth { get; set; }
 
-        public Func<string, string, bool> CheckPrvlg { get; set; }
+        public Func<PrivilegeIdentity, bool> CheckPrvlg { get; set; }
     }
 }

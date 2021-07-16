@@ -28,7 +28,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     }
                     var identity = AuthReader.Read(authorization);
                     if (identity.NotNull()
-                        && await AuthConst.CheckAuth(identity.Id, identity.Token, HttpClientReader.Read(agents)))
+                        && await AuthConst.CheckAuth(identity, HttpClientReader.Read(agents)))
                     { 
                         await next();
                     }

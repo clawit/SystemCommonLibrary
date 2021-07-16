@@ -7,10 +7,12 @@
     {
         public int Id { get; set; }
         public string Token { get; set; }
-        public TokenAuthIdentity(int id, string token)
+        public string Permission { get; set; }
+        public TokenAuthIdentity(int id, string token, string permission = null)
         {
-            this.Id = id;
-            this.Token = token;
+            Id = id;
+            Token = token;
+            Permission = permission;
         }
     }
 }

@@ -37,10 +37,10 @@ namespace SystemCommonLibrary.AspNetCore.Auth
             if (authToken.Length < 2)
                 return null;
 
-            int id = 0;
-            if (!Int32.TryParse(authToken[0], out id)
-                && id != 0)
+            if (!int.TryParse(authToken[0], out int id) && id != 0)
                 return null;
+            else if (authToken.Length == 3)
+                return new TokenAuthIdentity(id, authToken[1], authToken[2]);
             else
                 return new TokenAuthIdentity(id, authToken[1]);
         }
