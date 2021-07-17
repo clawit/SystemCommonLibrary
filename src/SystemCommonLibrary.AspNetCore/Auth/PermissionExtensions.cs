@@ -16,9 +16,11 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         }
 
         public static IApplicationBuilder UsePermission(this IApplicationBuilder builder,
-                Func<PermissionActionContext, TokenAuthIdentity, HttpClientType, Task<bool>> checkPermission)
+                Func<PermissionActionContext, TokenAuthIdentity, HttpClientType, Task<bool>> checkPermission,
+                string forbiddenUrl)
         {
             AuthConst.CheckPermission = checkPermission;
+            AuthConst.ForbiddenUrl = forbiddenUrl;
 
             return builder;
         }

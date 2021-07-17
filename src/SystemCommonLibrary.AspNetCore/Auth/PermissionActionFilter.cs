@@ -45,7 +45,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     await next();
                 }
                 else
-                    context.Result = new RedirectResult(AuthConst.LoginUrl);
+                    context.Result = new RedirectResult(AuthConst.ForbiddenUrl);
             }
             else
                 context.Result = new RedirectResult(AuthConst.LoginUrl);
