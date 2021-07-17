@@ -36,9 +36,9 @@ namespace SystemCommonLibrary.Auth
             if (!int.TryParse(authToken[0], out int id) && id != 0)
                 return null;
             else if (authToken.Length == 3)
-                return new TokenAuthIdentity(id, authToken[1], authToken[2]);
+                return new TokenAuthIdentity(id, Base64Encrypt.FromBase64(authToken[1]), Base64Encrypt.FromBase64(authToken[2]));
             else
-                return new TokenAuthIdentity(id, authToken[1]);
+                return new TokenAuthIdentity(id, Base64Encrypt.FromBase64(authToken[1]));
         }
     }
 }

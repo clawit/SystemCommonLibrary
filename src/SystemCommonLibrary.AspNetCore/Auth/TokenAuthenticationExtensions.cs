@@ -34,12 +34,13 @@ namespace SystemCommonLibrary.AspNetCore.Auth
             return builder.AddScheme<TokenAuthenticationOptions, TokenAuthenticationHandler>(authenticationScheme, configureOptions);
         }
 
-        public static void AddMvcTokenAuthentication(this IServiceCollection services)
+        public static IServiceCollection AddMvcTokenAuthentication(this IServiceCollection services)
         {
             services.AddScoped<AuthorizeActionFilter>();
+            return services;
         }
 
-        public static void UseMvcTokenAuthentication(this IApplicationBuilder builder,
+        public static IApplicationBuilder UseMvcTokenAuthentication(this IApplicationBuilder builder,
             Func<TokenAuthIdentity, HttpClientType, Task<bool>> checkToken,
             string loginUrl, string prefix = "Token", AuthType authType = AuthType.Internal)
         {
@@ -47,6 +48,8 @@ namespace SystemCommonLibrary.AspNetCore.Auth
             AuthConst.AuthType = authType;
             AuthConst.CheckAuth = checkToken;
             AuthConst.LoginUrl = loginUrl;
+
+            return builder;
         }
     }
 }
