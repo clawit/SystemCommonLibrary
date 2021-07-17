@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 
-namespace SystemCommonLibrary.AspNetCore.Auth
+namespace SystemCommonLibrary.Auth
 {
-    public class ActionContext
+    public class PermissionActionContext
     {
         public string ActionName { get; set; }
         public string ControllerName { get; set; }

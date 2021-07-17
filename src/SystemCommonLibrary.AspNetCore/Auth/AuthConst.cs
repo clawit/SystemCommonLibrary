@@ -19,6 +19,6 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         internal static string LoginUrl;
 
         //permission
-        internal static Func<ActionContext, TokenAuthIdentity, HttpClientType, Task<bool>> CheckPermission;
+        internal static Func<PermissionActionContext, TokenAuthIdentity, HttpClientType, Task<bool>> CheckPermission;
     }
 }

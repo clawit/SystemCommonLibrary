@@ -31,7 +31,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                 var identity = AuthReader.Read(authorization);
 
                 var descriptor = context.ActionDescriptor as ControllerActionDescriptor;
-                var actionContext = new ActionContext() {
+                var permissionActionContext = new PermissionActionContext() {
                     ActionName = descriptor.ActionName,
                     ControllerName = descriptor.ControllerName,
                     ControllerTypeInfo = descriptor.ControllerTypeInfo,
@@ -39,7 +39,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     MethodInfo = descriptor.MethodInfo
                 };
                 if (identity.NotNull()
-                    && await AuthConst.CheckPermission(actionContext, identity, HttpClientReader.Read(agents)))
+                    && await AuthConst.CheckPermission(permissionActionContext, identity, HttpClientReader.Read(agents)))
                 {
                     await next();
                 }
