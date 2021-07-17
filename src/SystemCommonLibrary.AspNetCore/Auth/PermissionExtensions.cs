@@ -18,7 +18,7 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         }
 
         public static IApplicationBuilder UsePermission(this IApplicationBuilder builder,
-                Func<ActionDescriptor, HttpContext, TokenAuthIdentity, HttpClientType, Task<bool>> checkPermission)
+                Func<ActionContext, TokenAuthIdentity, HttpClientType, Task<bool>> checkPermission)
         {
             AuthConst.CheckPermission = checkPermission;
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
 using SystemCommonLibrary.Auth;
@@ -28,8 +29,17 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     context.Result = new RedirectResult(AuthConst.LoginUrl);
                 }
                 var identity = AuthReader.Read(authorization);
+
+                var descriptor = context.ActionDescriptor as ControllerActionDescriptor;
+                var actionContext = new ActionContext() {
+                    ActionName = descriptor.ActionName,
+                    ControllerName = descriptor.ControllerName,
+                    ControllerTypeInfo = descriptor.ControllerTypeInfo,
+                    DisplayName = descriptor.DisplayName,
+                    MethodInfo = descriptor.MethodInfo
+                };
                 if (identity.NotNull()
-                    && await AuthConst.CheckPermission(context.ActionDescriptor, context.HttpContext, identity, HttpClientReader.Read(agents)))
+                    && await AuthConst.CheckPermission(actionContext, identity, HttpClientReader.Read(agents)))
                 {
                     await next();
                 }
