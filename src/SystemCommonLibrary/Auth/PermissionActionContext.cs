@@ -9,6 +9,6 @@ namespace SystemCommonLibrary.Auth
         public TypeInfo ControllerTypeInfo { get; set; }
         public string DisplayName { get; set; }
         public MethodInfo MethodInfo { get; set; }
-
+        public string Path { get; set; }
     }
 }

@@ -36,7 +36,8 @@ namespace SystemCommonLibrary.AspNetCore.Auth
                     ControllerName = descriptor.ControllerName,
                     ControllerTypeInfo = descriptor.ControllerTypeInfo,
                     DisplayName = descriptor.DisplayName,
-                    MethodInfo = descriptor.MethodInfo
+                    MethodInfo = descriptor.MethodInfo,
+                    Path = context.HttpContext.Request.Path
                 };
                 if (identity.NotNull()
                     && await AuthConst.CheckPermission(permissionActionContext, identity, HttpClientReader.Read(agents)))
