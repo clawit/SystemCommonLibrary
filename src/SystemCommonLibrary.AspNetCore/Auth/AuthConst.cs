@@ -20,6 +20,5 @@ namespace SystemCommonLibrary.AspNetCore.Auth
 
         //permission
         internal static Func<PermissionActionContext, TokenAuthIdentity, HttpClientType, Task<bool>> CheckPermission;
-        internal static string ForbiddenUrl;
     }
 }
