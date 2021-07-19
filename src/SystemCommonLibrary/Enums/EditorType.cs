@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SystemCommonLibrary.Enums
+﻿namespace SystemCommonLibrary.Enums
 {
     public enum EditorType
     {
@@ -17,8 +15,6 @@ namespace SystemCommonLibrary.Enums
         Flyer = 10,         //单页
         Json = 11,          //json
         Icon = 12,          //图标
-        EntityFilter = 13,   //实体筛选
-
     }
 
 }
