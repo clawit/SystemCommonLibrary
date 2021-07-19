@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SystemCommonLibrary.Auth;
+using SystemCommonLibrary.Valid;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
 {
@@ -8,12 +9,18 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         public static int Read(HttpRequest request)
         {
             if (request == null || request.Headers.Count == 0 
-                || request.Headers["Authorization"].Count == 0 )
+                || request.Headers[AuthConst.AuthKey].Count == 0 )
             {
                 return 0;
             }
-            var authorization = request.Headers["Authorization"].ToString();
-            if (!authorization.StartsWith(AuthConst.AuthPrefix))
+            var authorization = request.Headers[AuthConst.AuthKey].ToString();
+            if (authorization.IsEmpty())
+            {
+                //如果header中没有读到尝试从cookie中读取
+                authorization = request.Cookies[AuthConst.AuthKey];
+            }
+
+            if (authorization.IsEmpty() || !authorization.StartsWith(AuthConst.AuthPrefix))
             {
                 return 0;
             }
