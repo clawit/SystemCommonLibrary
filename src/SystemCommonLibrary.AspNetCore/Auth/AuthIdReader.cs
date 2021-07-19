@@ -9,7 +9,8 @@ namespace SystemCommonLibrary.AspNetCore.Auth
         public static int Read(HttpRequest request)
         {
             if (request == null || request.Headers.Count == 0 
-                || request.Headers[AuthConst.AuthKey].Count == 0 )
+                || request.Headers[AuthConst.AuthKey].Count == 0
+                || request.Cookies[AuthConst.AuthKey].IsEmpty())
             {
                 return 0;
             }
