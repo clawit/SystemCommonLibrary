@@ -15,6 +15,7 @@
         Flyer = 10,         //单页
         Json = 11,          //json
         Icon = 12,          //图标
+        Password = 13       //密码
     }
 
 }
