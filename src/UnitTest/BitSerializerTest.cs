@@ -26,7 +26,9 @@ namespace UnitTest
         public static double Dim9 { get; set; } = 3.33;
 
         public object Dim10 = new List<string>() { "Val" };
-    }
+
+        public string Dim11 { get; set; }
+}
 
     public class LevelTwo
     {
@@ -84,7 +86,8 @@ namespace UnitTest
                         Dim5 = 20,
                         Dim6 = LevelEnum.Enum2
                     }
-                }
+                },
+                Dim11 = "Val2"
             };
 
             var bytes = BitSerializer.Serialize(src);
@@ -93,6 +96,7 @@ namespace UnitTest
             var dest = (LevelOne)obj;
 
             Assert.Equal(src.Dim1, dest.Dim1);
+            Assert.Equal(src.Dim11, dest.Dim11);
             Assert.Equal(src.Dim4, dest.Dim4);
             Assert.Equal(111, LevelOne.Dim7);
             Assert.Equal(src.Dim10, dest.Dim10);

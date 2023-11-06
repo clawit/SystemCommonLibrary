@@ -1,5 +1,6 @@
 ﻿/*--------------------------------------------------------------------------
 * BitSerializer
+* ver 1.1.0.0 (Nov. 7th, 2023) modified by KevinShen
 * ver 1.0.1.0 (Nov. 25th, 2019) modified by KevinShen
 * ver 1.0.0.0 (May. 16th, 2018)
 *
@@ -161,17 +162,17 @@ namespace SystemCommonLibrary.Serialization
             
             if (fs != null && fs.Length > 0)
             {
-                Dictionary<Type, object> dicFields = new Dictionary<Type, object>();
+                var fields = new List<(Type, object)>();
                 ApplyPropertySerializable(fs, type);
                 foreach (var field in fs)
                 {
                     if (field != null)
                     {
-                        dicFields.Add(field.FieldType, field.GetValue(obj));
+                        fields.Add((field.FieldType, field.GetValue(obj)));
                     }
                 }
                 
-                data = Serialize(dicFields);
+                data = SerializeFields(fields);
 
                 len = data.Length;
             }
@@ -312,25 +313,25 @@ namespace SystemCommonLibrary.Serialization
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
-        public static byte[] Serialize(Dictionary<Type, object> @params)
+        private static byte[] SerializeFields(List<(Type Name, object Value)> fields)
         {
             List<byte> datas = new List<byte>();
 
-            if (@params != null)
+            if (fields != null)
             {
-                foreach (var param in @params)
+                foreach (var field in fields)
                 {
-                    if (param.Key.IsObject())
+                    if (field.Name.IsObject())
                     {
                         List<byte> objParam = new List<byte>();
-                        var realTypeName = param.Value.GetType().AssemblyQualifiedName;
+                        var realTypeName = field.Value.GetType().AssemblyQualifiedName;
                         objParam.AddRange(Serialize(realTypeName));
-                        objParam.AddRange(Serialize(param.Value));
+                        objParam.AddRange(Serialize(field.Value));
 
                         datas.AddRange(Serialize(objParam.ToArray()));
                     }
                     else
-                        datas.AddRange(Serialize(param.Value));
+                        datas.AddRange(Serialize(field.Value));
                 }
             }
 
