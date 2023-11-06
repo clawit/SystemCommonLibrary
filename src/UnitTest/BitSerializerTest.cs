@@ -5,7 +5,7 @@ using Xunit;
 
 namespace UnitTest
 {
-    public class LevelOne 
+    public class LevelOne
     {
         public string Dim1 { get; set; }
 
@@ -28,7 +28,7 @@ namespace UnitTest
         public object Dim10 = new List<string>() { "Val" };
 
         public string Dim11 { get; set; }
-}
+    }
 
     public class LevelTwo
     {
@@ -38,7 +38,7 @@ namespace UnitTest
 
         public Dictionary<string, object> Dim3 { get; set; }
 
-        public LevelThree Dim4 { get; set; } 
+        public LevelThree Dim4 { get; set; }
     }
 
     public class LevelThree
@@ -57,11 +57,11 @@ namespace UnitTest
         public LevelEnum Dim6;
 
         [NoSerialize]
-        public double Dim7 { get; set;}
+        public double Dim7 { get; set; }
     }
 
     public enum LevelEnum
-    { 
+    {
         Enum1 = 10,
         Enum2 = 100
     }
@@ -71,14 +71,17 @@ namespace UnitTest
         [Fact]
         public void SerializeTest()
         {
-            var src = new LevelOne() {
+            var src = new LevelOne()
+            {
                 Dim1 = "Val",
                 Dim4 = Convert.ToDateTime("2000-01-01 01:02:03.789"),
-                Dim5 = new LevelTwo() {
+                Dim5 = new LevelTwo()
+                {
                     Dim1 = new List<string>() { "Val1", "Val2" },
                     Dim2 = new int[] { 1, 10, 100, 1000 },
                     Dim3 = new Dictionary<string, object>(),
-                    Dim4 = new LevelThree() {
+                    Dim4 = new LevelThree()
+                    {
                         Dim1 = typeof(LevelTwo),
                         Dim2 = 2000,
                         Dim3 = Guid.NewGuid(),
