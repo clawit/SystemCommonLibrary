@@ -34,8 +34,7 @@ namespace SystemCommonLibrary.Reflect
             {
                 throw new Exception("服务方法中不能包含接口内容！");
             }
-
-            if (type.IsClass)
+            else if (type.IsClass)
             {
                 var fullName = type.FullName + methodName;
 
@@ -59,9 +58,13 @@ namespace SystemCommonLibrary.Reflect
                     };
                 });
                 typeInfo.Instance = Activator.CreateInstance(type);
+
                 return typeInfo;
             }
-            return null;
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
