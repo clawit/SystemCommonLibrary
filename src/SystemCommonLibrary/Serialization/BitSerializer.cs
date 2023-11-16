@@ -62,7 +62,7 @@ namespace SystemCommonLibrary.Serialization
                     {
                         var pv = field.GetValue(instance);
                         //检查是否被装箱过
-                        if (pv != null && field.FieldType.IsObject())
+                        if (pv != null && (field.FieldType.IsObject() || field.FieldType.IsAbstract))
                         {
                             var data = new List<byte>();
                             //将源类型名先序列化
@@ -91,7 +91,7 @@ namespace SystemCommonLibrary.Serialization
             var args = list.GetType().GetGenericArguments();
             foreach (var item in list)
             {
-                if (item != null && args.Length > 0 && args[0].IsObject())
+                if (item != null && args.Length > 0 && (args[0].IsObject() || args[0].IsAbstract))
                 {
                     var data = new List<byte>();
                     data.AddRange(Serialize(item.GetType().AssemblyQualifiedName));
@@ -122,7 +122,7 @@ namespace SystemCommonLibrary.Serialization
                     for (int j = 0; j < ps.Length; j++)
                     {
                         var pv = ps[j].GetValue(item, null);
-                        if (pv != null && args[j].IsObject())
+                        if (pv != null && (args[j].IsObject() || args[j].IsAbstract))
                         {
                             var data = new List<byte>();
                             data.AddRange(Serialize(pv.GetType().AssemblyQualifiedName));
@@ -158,7 +158,7 @@ namespace SystemCommonLibrary.Serialization
                     Array.Copy(datas, offset, fieldData, 0, fieldDataLength);
                     offset += fieldDataLength;
 
-                    if (fieldDataLength > 4 && field.FieldType.IsObject())
+                    if (fieldDataLength > 4 && (field.FieldType.IsObject() || field.FieldType.IsAbstract))
                     {
                         int lenRealNameType = BitConverter.ToInt32(fieldData, 4) + 4;
                         var dataRealNameType = new byte[lenRealNameType];
@@ -465,7 +465,7 @@ namespace SystemCommonLibrary.Serialization
                     var sData = Encoding.UTF8.GetString(data);
                     obj = Guid.Parse(sData);
                 }
-                else if (type == typeof(Type))
+                else if (type == typeof(Type) || type.IsRuntimeType())
                 {
                     var sData = Encoding.UTF8.GetString(data);
                     obj = Type.GetType(sData);

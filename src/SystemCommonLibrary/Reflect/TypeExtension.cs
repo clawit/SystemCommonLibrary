@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SystemCommonLibrary.Reflect
 {
@@ -11,6 +7,11 @@ namespace SystemCommonLibrary.Reflect
         public static bool IsObject(this Type type)
         {
             return type != null && type == typeof(object);
+        }
+
+        public static bool IsRuntimeType(this Type type)
+        {
+            return type.FullName == "System.RuntimeType";
         }
     }
 }

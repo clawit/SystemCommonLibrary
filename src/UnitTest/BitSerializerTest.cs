@@ -1,3 +1,4 @@
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -68,6 +69,17 @@ namespace UnitTest
         public string Dim9 { get; set; }
 
         public FileInfo Dim10 { get; set; }
+    }
+
+    public abstract class ClassBase { }
+
+    public class ClassInherit : ClassBase { 
+        public int Dim1 { get; set; }
+    }
+
+    public class ClassParent
+    {
+        public ClassBase Dim0 { get; set; }
     }
 
     public enum LevelEnum
@@ -183,6 +195,24 @@ namespace UnitTest
             Assert.Equal(src.Dim5.Dim4.Dim4, dest.Dim5.Dim4.Dim4);
             Assert.Equal(src.Dim5.Dim4.Dim5, dest.Dim5.Dim4.Dim5);
             Assert.Equal(src.Dim5.Dim4.Dim6, dest.Dim5.Dim4.Dim6);
+        }
+
+        [Fact]
+        public void SerializeInherit()
+        { 
+            var src = new ClassParent() { 
+                Dim0 = new ClassInherit() { 
+                    Dim1 = 99
+                }
+            };
+            var bytes = BitSerializer.Serialize(src);
+            var dest = BitSerializer.Deserialize<ClassParent>(bytes);
+            Assert.Equal(((ClassInherit)src.Dim0).Dim1, ((ClassInherit)dest.Dim0).Dim1);
+
+            ClassBase src2 = new ClassInherit() { Dim1 = 88 };
+            var bytes2 = BitSerializer.Serialize(src2);
+            var dest2 = BitSerializer.Deserialize<ClassInherit>(bytes2);
+            Assert.Equal(((ClassInherit)src2).Dim1, ((ClassInherit)dest2).Dim1);
         }
     }
 }
