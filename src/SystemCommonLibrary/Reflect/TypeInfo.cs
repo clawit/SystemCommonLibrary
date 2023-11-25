@@ -34,7 +34,7 @@ namespace SystemCommonLibrary.Reflect
             {
                 throw new Exception("服务方法中不能包含接口内容！");
             }
-            else if (type.IsClass)
+            else if (type.IsClass || type.IsStruct())
             {
                 var fullName = type.FullName + methodName;
 

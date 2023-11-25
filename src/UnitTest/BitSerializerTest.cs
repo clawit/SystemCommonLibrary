@@ -77,6 +77,11 @@ namespace UnitTest
         public int Dim1 { get; set; }
     }
 
+    public class ClassSize
+    { 
+        public Size Dim1 { get; set; }
+    }
+
     public class ClassParent
     {
         public ClassBase Dim0 { get; set; }
@@ -213,6 +218,18 @@ namespace UnitTest
             var bytes2 = BitSerializer.Serialize(src2);
             var dest2 = BitSerializer.Deserialize<ClassInherit>(bytes2);
             Assert.Equal(((ClassInherit)src2).Dim1, ((ClassInherit)dest2).Dim1);
+        }
+
+        [Fact]
+        public void DeserializeSize() 
+        {
+            var src = new ClassSize() { 
+                Dim1 = new Size(600, 300)
+            };
+            var bytes = BitSerializer.Serialize(src);
+            var dest = BitSerializer.Deserialize<ClassSize>(bytes);
+            Assert.Equal(src.Dim1.Height, dest.Dim1.Height);
+            Assert.Equal(src.Dim1.Width, dest.Dim1.Width);
         }
     }
 }

@@ -354,7 +354,7 @@ namespace SystemCommonLibrary.Serialization
                 else
                 {
                     var type = param.GetType();
-                    if (type.IsClass)
+                    if (type.IsClass || type.IsStruct())
                     {
                         if (type.IsGenericType || type.IsArray)
                         {
@@ -514,7 +514,7 @@ namespace SystemCommonLibrary.Serialization
                         throw new NotImplementedException("未定义的类型：" + type.ToString());
                     }
                 }
-                else if (type.IsClass)
+                else if (type.IsClass || type.IsStruct())
                 {
                     obj = DeserializeInstanceWithFields(type, data);
                 }
