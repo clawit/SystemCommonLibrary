@@ -318,6 +318,18 @@ namespace SystemCommonLibrary.Serialization
                 {
                     datas.AddRange(Encoding.UTF8.GetBytes(((decimal)param).ToString()));
                 }
+                else if (param is ushort)
+                {
+                    datas.AddRange(BitConverter.GetBytes((ushort)param));
+                }
+                else if (param is uint)
+                {
+                    datas.AddRange(BitConverter.GetBytes((uint)param));
+                }
+                else if (param is ulong)
+                {
+                    datas.AddRange(BitConverter.GetBytes((ulong)param));
+                }
                 else if (param is DateTime)
                 {
                     datas.AddRange(Encoding.UTF8.GetBytes(((DateTime)param).Ticks.ToString()));
@@ -453,6 +465,18 @@ namespace SystemCommonLibrary.Serialization
                 {
                     var sData = Encoding.UTF8.GetString(data);
                     obj = decimal.Parse(sData); ;
+                }
+                else if (type == typeof(ushort))
+                {
+                    obj = (BitConverter.ToUInt16(data, 0));
+                }
+                else if (type == typeof(uint))
+                {
+                    obj = (BitConverter.ToUInt32(data, 0));
+                }
+                else if (type == typeof(ulong))
+                {
+                    obj = (BitConverter.ToUInt64(data, 0));
                 }
                 else if (type == typeof(DateTime))
                 {

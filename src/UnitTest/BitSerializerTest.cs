@@ -1,4 +1,3 @@
-using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -80,6 +79,13 @@ namespace UnitTest
     public class ClassSize
     { 
         public Size Dim1 { get; set; }
+    }
+
+    public class ClassUInt
+    {
+        public ushort Dim1 { get; set; }
+        public uint Dim2 { get; set; }
+        public ulong Dim3 { get; set; }
     }
 
     public class ClassParent
@@ -230,6 +236,22 @@ namespace UnitTest
             var dest = BitSerializer.Deserialize<ClassSize>(bytes);
             Assert.Equal(src.Dim1.Height, dest.Dim1.Height);
             Assert.Equal(src.Dim1.Width, dest.Dim1.Width);
+        }
+
+        [Fact]
+        public void DeserializeColor()
+        {
+            var src = new ClassUInt()
+            {
+                Dim1 = 1,
+                Dim2 = 2,
+                Dim3 = 3
+            };
+            var bytes = BitSerializer.Serialize(src);
+            var dest = BitSerializer.Deserialize<ClassUInt>(bytes);
+            Assert.Equal(src.Dim1, dest.Dim1);
+            Assert.Equal(src.Dim2, dest.Dim2);
+            Assert.Equal(src.Dim3, dest.Dim3);
         }
     }
 }

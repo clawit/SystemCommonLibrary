@@ -5,18 +5,18 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Copyright>clawit.com</Copyright>
-    <Version>0.7.0.4</Version>
-    <AssemblyVersion>0.7.0.4</AssemblyVersion>
+    <Version>0.7.0.5</Version>
+    <AssemblyVersion>0.7.0.5</AssemblyVersion>
     <Authors>clawit.com</Authors>
     <Company>clawit.com</Company>
-    <FileVersion>0.7.0.4</FileVersion>
+    <FileVersion>0.7.0.5</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.21" />
+    <PackageReference Include="Dapper" Version="2.1.24" />
     <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
     <PackageReference Include="MySql.Data" Version="8.2.0" />
-    <PackageReference Include="Npgsql" Version="7.0.6" />
+    <PackageReference Include="Npgsql" Version="8.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.7.4" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
