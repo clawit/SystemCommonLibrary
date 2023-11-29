@@ -414,7 +414,7 @@ namespace SystemCommonLibrary.Serialization
                 offset += len;
 
                 //先检查是否被装箱过
-                if (type.IsObject())
+                if (type.IsObject() || type == typeof(Enum))
                 {
                     var lenRealType = BitConverter.ToInt32(data, 0) + 4;
                     byte[] dataTypeName = new byte[lenRealType];

@@ -253,5 +253,19 @@ namespace UnitTest
             Assert.Equal(src.Dim2, dest.Dim2);
             Assert.Equal(src.Dim3, dest.Dim3);
         }
+
+        [Fact]
+        public void DeserializeEnum()
+        {
+            var src = new Dictionary<Enum, int>()
+            {
+                {LevelEnum.Enum1, 10},
+                {LevelEnum.Enum2, 20}
+            };
+            var bytes = BitSerializer.Serialize(src);
+            var dest = BitSerializer.Deserialize<Dictionary<Enum, int>>(bytes);
+            Assert.Equal(src[LevelEnum.Enum1], src[LevelEnum.Enum1]);
+            Assert.Equal(src[LevelEnum.Enum2], src[LevelEnum.Enum2]);
+        }
     }
 }
