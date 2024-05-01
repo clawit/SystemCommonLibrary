@@ -53,7 +53,7 @@ namespace SystemCommonLibrary.Data.Helper
             }
         }
 
-        public static async Task<IEnumerable<T>> QueryAsync<T>(DbType type, string connectionString, string sql)
+        public static async Task<IEnumerable<T>> QueryAsync<T>(DbType type, string connectionString, string sql, int? commandTimeout = null)
         {
             if (DebugMode)
             {
@@ -63,13 +63,13 @@ namespace SystemCommonLibrary.Data.Helper
             switch (type)
             {
                 case DbType.MySql:
-                    return await MySqlHelper.QueryAsync<T>(connectionString, sql);
+                    return await MySqlHelper.QueryAsync<T>(connectionString, sql, commandTimeout);
                 case DbType.SqlServer:
-                    return await SqlServerHelper.QueryAsync<T>(connectionString, sql);
+                    return await SqlServerHelper.QueryAsync<T>(connectionString, sql, commandTimeout);
                 case DbType.PostgreSql:
-                    return await PgSqlHelper.QueryAsync<T>(connectionString, sql);
+                    return await PgSqlHelper.QueryAsync<T>(connectionString, sql, commandTimeout);
                 case DbType.Sqlite:
-                    return await SqliteHelper.QueryAsync<T>(connectionString, sql);
+                    return await SqliteHelper.QueryAsync<T>(connectionString, sql, commandTimeout);
                 default:
                     throw new NotImplementedException();
             }

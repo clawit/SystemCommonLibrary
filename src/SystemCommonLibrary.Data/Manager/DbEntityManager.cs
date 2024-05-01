@@ -176,9 +176,9 @@ namespace SystemCommonLibrary.Data.Manager
             return await Select<T>(type, db, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string sql)
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string sql, int? commandTimeout = null)
         {
-            return await SqlHelper.QueryAsync<T>(type, db, sql);
+            return await SqlHelper.QueryAsync<T>(type, db, sql, commandTimeout);
         }
 
         public static async Task<int> Remove(DbType type, string db, string sql)
