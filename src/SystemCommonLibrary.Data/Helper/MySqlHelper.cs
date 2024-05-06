@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
@@ -36,8 +37,15 @@ namespace SystemCommonLibrary.Data.Helper
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                await connection.OpenAsync();
-                return await connection.QueryAsync<T>(sql, commandTimeout);
+                try
+                {
+                    await connection.OpenAsync();
+                    return await connection.QueryAsync<T>(sql, commandTimeout);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 
