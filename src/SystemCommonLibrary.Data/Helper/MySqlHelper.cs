@@ -37,15 +37,8 @@ namespace SystemCommonLibrary.Data.Helper
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                try
-                {
-                    await connection.OpenAsync();
-                    return await connection.QueryAsync<T>(sql, commandTimeout);
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
+                await connection.OpenAsync();
+                return await connection.QueryAsync<T>(sql, commandTimeout);
             }
         }
 

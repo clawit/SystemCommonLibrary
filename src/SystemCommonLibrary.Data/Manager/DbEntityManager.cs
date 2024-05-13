@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,6 +13,13 @@ namespace SystemCommonLibrary.Data.Manager
 {
     public static class DbEntityManager
     {
+        #region Setting Methods
+        public static void SetCommandTimeout(int commandTimeout)
+        {
+            SqlMapper.Settings.CommandTimeout = commandTimeout;
+        }
+        #endregion
+
         #region DB Methods
 
         public static async Task<int> Insert<T>(DbType type, string db, T entity)
@@ -176,9 +184,9 @@ namespace SystemCommonLibrary.Data.Manager
             return await Select<T>(type, db, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string sql, int? commandTimeout = null)
+        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string sql)
         {
-            return await SqlHelper.QueryAsync<T>(type, db, sql, commandTimeout);
+            return await SqlHelper.QueryAsync<T>(type, db, sql);
         }
 
         public static async Task<int> Remove(DbType type, string db, string sql)

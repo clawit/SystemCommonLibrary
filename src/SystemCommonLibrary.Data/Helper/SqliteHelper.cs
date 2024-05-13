@@ -32,12 +32,12 @@ namespace SystemCommonLibrary.Data.Helper
             }
         }
 
-        public static async Task<IEnumerable<T>> QueryAsync<T>(string connectionString, string sql, int? commandTimeout = null)
+        public static async Task<IEnumerable<T>> QueryAsync<T>(string connectionString, string sql)
         {
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 await connection.OpenAsync();
-                return await connection.QueryAsync<T>(sql, commandTimeout);
+                return await connection.QueryAsync<T>(sql);
             }
         }
 
