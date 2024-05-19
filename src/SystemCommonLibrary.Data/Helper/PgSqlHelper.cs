@@ -37,7 +37,7 @@ namespace SystemCommonLibrary.Data.Helper
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 await connection.OpenAsync();
-                return await connection.QueryAsync<T>(sql);
+                return await connection.QueryAsync<T>(sql, commandTimeout: SqlMapper.Settings.CommandTimeout);
             }
         }
 
@@ -68,7 +68,7 @@ namespace SystemCommonLibrary.Data.Helper
             var trans = transaction as NpgsqlTransaction;
             var connection = trans.Connection;
 
-            return await connection.QueryAsync<T>(sql, transaction: trans);
+            return await connection.QueryAsync<T>(sql, transaction: trans, commandTimeout: SqlMapper.Settings.CommandTimeout);
         }
     }
 }

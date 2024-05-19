@@ -38,10 +38,7 @@ namespace SystemCommonLibrary.Data.Helper
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 await connection.OpenAsync();
-                if (SqlMapper.Settings.CommandTimeout != null && SqlMapper.Settings.CommandTimeout > 0)
-                    return await connection.QueryAsync<T>(sql, commandTimeout: SqlMapper.Settings.CommandTimeout);
-                else
-                    return await connection.QueryAsync<T>(sql);
+                return await connection.QueryAsync<T>(sql, commandTimeout: SqlMapper.Settings.CommandTimeout);
             }
         }
 
@@ -71,7 +68,7 @@ namespace SystemCommonLibrary.Data.Helper
             var trans = transaction as MySqlTransaction;
             var connection = trans.Connection;
 
-            return await connection.QueryAsync<T>(sql, transaction: trans);
+            return await connection.QueryAsync<T>(sql, transaction: trans, commandTimeout: SqlMapper.Settings.CommandTimeout);
         }
     }
 }
