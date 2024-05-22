@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using SystemCommonLibrary.Data.Helper;
 using SystemCommonLibrary.Enums;
 
 [assembly: InternalsVisibleTo("UnitTest")]
@@ -35,7 +34,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
             else 
             {
-                return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
+                return await SqlHelper.ExecuteAsync(type, db, sql);
             }
         }
 
@@ -51,19 +50,19 @@ namespace SystemCommonLibrary.Data.Manager
         {
             string sql = GenUpdateSql(type, entity, key, keyVal);
 
-            return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
+            return await SqlHelper.ExecuteAsync(type, db, sql);
         }
 
         public static async Task<int> Update<T>(DbType type, string db, T entity)
         {
             string sql = GenUpdateSql(type, entity);
 
-            return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
+            return await SqlHelper.ExecuteAsync(type, db, sql);
         }
 
         public static async Task<int> Update(DbType type, string db, string sql)
         {
-            return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
+            return await SqlHelper.ExecuteAsync(type, db, sql);
         }
 
         public static async Task<int> SelectCount<T>(DbType type, string db, QueryFilter queryFilter)
@@ -183,7 +182,7 @@ namespace SystemCommonLibrary.Data.Manager
 
         public static async Task<int> Remove(DbType type, string db, string sql)
         {
-            return await SqlHelper.ExecuteNonQueryAsync(type, db, sql);
+            return await SqlHelper.ExecuteAsync(type, db, sql);
         }
 
         public static async Task<int> Remove<T>(DbType type, string db, string key, object keyVal)
