@@ -1,5 +1,4 @@
-﻿using Dapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,13 +12,6 @@ namespace SystemCommonLibrary.Data.Manager
 {
     public static class DbEntityManager
     {
-        #region Setting Methods
-        public static void SetCommandTimeout(int commandTimeout)
-        {
-            SqlMapper.Settings.CommandTimeout = commandTimeout;
-        }
-        #endregion
-
         #region DB Methods
 
         public static async Task<int> Insert<T>(DbType type, string db, T entity)
