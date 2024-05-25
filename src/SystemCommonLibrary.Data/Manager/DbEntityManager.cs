@@ -1,19 +1,202 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using SystemCommonLibrary.Enums;
+using DbType = SystemCommonLibrary.Enums.DbType;
 
 [assembly: InternalsVisibleTo("UnitTest")]
 namespace SystemCommonLibrary.Data.Manager
 {
     public static class DbEntityManager
     {
-        #region DB Methods
+        #region Sync DB Methods
 
-        public static async Task<int> Insert<T>(DbType type, string db, T entity)
+        public static int Insert<T>(DbType type, string db, T entity)
+        {
+            string sql = GenInsertSql(type, entity, out bool hasIdentity);
+            if (hasIdentity)
+            {
+                var id = SqlHelper.ExecuteScalar(type, db, sql);
+                var columns = typeof(T).GetProperties();
+                foreach (var column in columns)
+                {
+                    bool isKey = column.GetCustomAttributes(typeof(KeyAttribute), true).Length > 0;
+                    if (isKey)
+                    {
+                        column.SetValue(entity, Convert.ToInt32(id));
+                        break;
+                    }
+                }
+
+                return Convert.ToInt32(id);
+            }
+            else
+            {
+                return SqlHelper.Execute(type, db, sql);
+            }
+        }
+
+        public static bool Exist<T>(DbType type, string db, string key, object keyVal)
+        {
+            string sql = GenExistSql<T>(type, key, keyVal);
+
+            object result = SqlHelper.ExecuteScalar(type, db, sql);
+            return result.ToString() != "0";
+        }
+
+        public static int Update<T>(DbType type, string db, T entity, string key, object keyVal)
+        {
+            string sql = GenUpdateSql(type, entity, key, keyVal);
+
+            return SqlHelper.Execute(type, db, sql);
+        }
+
+        public static int Update<T>(DbType type, string db, T entity)
+        {
+            string sql = GenUpdateSql(type, entity);
+
+            return SqlHelper.Execute(type, db, sql);
+        }
+
+        public static int Update(DbType type, string db, string sql)
+        {
+            return SqlHelper.Execute(type, db, sql);
+        }
+
+        public static int SelectCount<T>(DbType type, string db, QueryFilter queryFilter)
+        {
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectCountSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
+            var count = SelectScalar(type, db, sql);
+
+            int result = -1;
+            int.TryParse(count.ToString(), out result);
+
+            return result;
+        }
+
+        public static T SelectOne<T>(DbType type, string db, string key, object keyVal)
+        {
+            string sql = GenSelectSql<T>(type, key, keyVal);
+            var result = SqlHelper.Query<T>(type, db, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static T SelectOne<T>(DbType type, string db, QueryFilter queryFilter)
+        {
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
+            var result = SqlHelper.Query<T>(type, db, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static T SelectOne<T>(DbType type, string db, string sql)
+        {
+            var result = SqlHelper.Query<T>(type, db, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static T SelectOne<T>(DbType type, string db, Dictionary<string, object> keyVals)
+        {
+            string sql = GenSelectSql<T>(type, keyVals);
+            return SelectOne<T>(type, db, sql);
+        }
+
+        public static object SelectScalar(DbType type, string db, string sql)
+        {
+            return SqlHelper.ExecuteScalar(type, db, sql);
+        }
+
+        public static object SelectScalar<T>(DbType type, string db, string col, Dictionary<string, object> keyVals)
+        {
+            var sql = GenScalaSql<T>(type, col, keyVals);
+            return SqlHelper.ExecuteScalar(type, db, sql);
+        }
+        public static IEnumerable<T> Select<T>(DbType type, string db)
+        {
+            string sql = GenSelectSql<T>(type);
+            return Select<T>(type, db, sql);
+        }
+
+        public static IEnumerable<T> Select<T>(DbType type, string db, string key, object keyVal)
+        {
+            string sql = GenSelectSql<T>(type, key, keyVal);
+            return Select<T>(type, db, sql);
+        }
+
+        public static IEnumerable<T> Select<T>(DbType type, string db, Dictionary<string, object> keyVals)
+        {
+            string sql = GenSelectSql<T>(type, keyVals);
+            return Select<T>(type, db, sql);
+        }
+
+        public static IEnumerable<T> Select<T>(DbType type, string db, QueryFilter queryFilter)
+        {
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
+            return Select<T>(type, db, sql);
+        }
+
+        public static IEnumerable<T> Select<T>(DbType type, string db, string sql)
+        {
+            return SqlHelper.Query<T>(type, db, sql);
+        }
+
+        public static int Remove(DbType type, string db, string sql)
+        {
+            return SqlHelper.Execute(type, db, sql);
+        }
+
+        public static int Remove<T>(DbType type, string db, string key, object keyVal)
+        {
+            string sql = GenRemoveSql<T>(type, key, keyVal);
+            return Remove(type, db, sql);
+        }
+
+        #endregion
+
+        #region Async DB Methods
+
+        public static async Task<int> InsertAsync<T>(DbType type, string db, T entity)
         {
             string sql = GenInsertSql(type, entity, out bool hasIdentity);
             if (hasIdentity)
@@ -38,7 +221,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<bool> Exist<T>(DbType type, string db, string key, object keyVal)
+        public static async Task<bool> ExistAsync<T>(DbType type, string db, string key, object keyVal)
         {
             string sql = GenExistSql<T>(type, key, keyVal);
 
@@ -46,26 +229,26 @@ namespace SystemCommonLibrary.Data.Manager
             return result.ToString() != "0";
         }
 
-        public static async Task<int> Update<T>(DbType type, string db, T entity, string key, object keyVal)
+        public static async Task<int> UpdateAsync<T>(DbType type, string db, T entity, string key, object keyVal)
         {
             string sql = GenUpdateSql(type, entity, key, keyVal);
 
             return await SqlHelper.ExecuteAsync(type, db, sql);
         }
 
-        public static async Task<int> Update<T>(DbType type, string db, T entity)
+        public static async Task<int> UpdateAsync<T>(DbType type, string db, T entity)
         {
             string sql = GenUpdateSql(type, entity);
 
             return await SqlHelper.ExecuteAsync(type, db, sql);
         }
 
-        public static async Task<int> Update(DbType type, string db, string sql)
+        public static async Task<int> UpdateAsync(DbType type, string db, string sql)
         {
             return await SqlHelper.ExecuteAsync(type, db, sql);
         }
 
-        public static async Task<int> SelectCount<T>(DbType type, string db, QueryFilter queryFilter)
+        public static async Task<int> SelectCountAsync<T>(DbType type, string db, QueryFilter queryFilter)
         {
             string filterSql = GenFilterSql(type, queryFilter);
             string sql = GenSelectCountSql<T>(type);
@@ -73,7 +256,7 @@ namespace SystemCommonLibrary.Data.Manager
             {
                 sql += " where " + filterSql;
             }
-            var count = await SelectScalar(type, db, sql);
+            var count = await SelectScalarAsync(type, db, sql);
 
             int result = -1;
             int.TryParse(count.ToString(), out result);
@@ -81,7 +264,7 @@ namespace SystemCommonLibrary.Data.Manager
             return result;
         }
 
-        public static async Task<T> SelectOne<T>(DbType type, string db, string key, object keyVal)
+        public static async Task<T> SelectOneAsync<T>(DbType type, string db, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
             var result = await SqlHelper.QueryAsync<T>(type, db, sql);
@@ -96,7 +279,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<T> SelectOne<T>(DbType type, string db, QueryFilter queryFilter)
+        public static async Task<T> SelectOneAsync<T>(DbType type, string db, QueryFilter queryFilter)
         {
             string filterSql = GenFilterSql(type, queryFilter);
             string sql = GenSelectSql<T>(type);
@@ -116,7 +299,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<T> SelectOne<T>(DbType type, string db, string sql)
+        public static async Task<T> SelectOneAsync<T>(DbType type, string db, string sql)
         {
             var result = await SqlHelper.QueryAsync<T>(type, db, sql);
 
@@ -130,41 +313,41 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<T> SelectOne<T>(DbType type, string db, Dictionary<string, object> keyVals)
+        public static async Task<T> SelectOneAsync<T>(DbType type, string db, Dictionary<string, object> keyVals)
         {
             string sql = GenSelectSql<T>(type, keyVals);
-            return await SelectOne<T>(type, db, sql);
+            return await SelectOneAsync<T>(type, db, sql);
         }
 
-        public static async Task<object> SelectScalar(DbType type, string db, string sql)
+        public static async Task<object> SelectScalarAsync(DbType type, string db, string sql)
         {
             return await SqlHelper.ExecuteScalarAsync(type, db, sql);
         }
 
-        public static async Task<object> SelectScalar<T>(DbType type, string db, string col, Dictionary<string, object> keyVals)
+        public static async Task<object> SelectScalarAsync<T>(DbType type, string db, string col, Dictionary<string, object> keyVals)
         {
             var sql = GenScalaSql<T>(type, col, keyVals);
             return await SqlHelper.ExecuteScalarAsync(type, db, sql);
         }
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, string db)
         {
             string sql = GenSelectSql<T>(type);
-            return await Select<T>(type, db, sql);
+            return await SelectAsync<T>(type, db, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string key, object keyVal)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, string db, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
-            return await Select<T>(type, db, sql);
+            return await SelectAsync<T>(type, db, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, Dictionary<string, object> keyVals)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, string db, Dictionary<string, object> keyVals)
         {
             string sql = GenSelectSql<T>(type, keyVals);
-            return await Select<T>(type, db, sql);
+            return await SelectAsync<T>(type, db, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, QueryFilter queryFilter)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, string db, QueryFilter queryFilter)
         {
             string filterSql = GenFilterSql(type, queryFilter);
             string sql = GenSelectSql<T>(type);
@@ -172,29 +355,209 @@ namespace SystemCommonLibrary.Data.Manager
             {
                 sql += " where " + filterSql;
             }
-            return await Select<T>(type, db, sql);
+            return await SelectAsync<T>(type, db, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, string db, string sql)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, string db, string sql)
         {
             return await SqlHelper.QueryAsync<T>(type, db, sql);
         }
 
-        public static async Task<int> Remove(DbType type, string db, string sql)
+        public static async Task<int> RemoveAsync(DbType type, string db, string sql)
         {
             return await SqlHelper.ExecuteAsync(type, db, sql);
         }
 
-        public static async Task<int> Remove<T>(DbType type, string db, string key, object keyVal)
+        public static async Task<int> RemoveAsync<T>(DbType type, string db, string key, object keyVal)
         {
             string sql = GenRemoveSql<T>(type, key, keyVal);
-            return await Remove(type, db, sql);
+            return await RemoveAsync(type, db, sql);
         }
 
         #endregion
 
-        #region Transaction Methods
-        public static async Task<int> Insert<T>(DbType type, System.Data.IDbTransaction transaction, T entity)
+        #region Sync Transaction Methods
+        public static int Insert<T>(DbType type, IDbTransaction transaction, T entity)
+        {
+            string sql = GenInsertSql(type, entity, out bool hasIdentity);
+            if (hasIdentity)
+            {
+                var id = SqlHelper.ExecuteScalar(type, transaction, sql);
+                var columns = typeof(T).GetProperties();
+                foreach (var column in columns)
+                {
+                    bool isKey = column.GetCustomAttributes(typeof(KeyAttribute), true).Length > 0;
+                    if (isKey)
+                    {
+                        column.SetValue(entity, Convert.ToInt32(id));
+                        break;
+                    }
+                }
+
+                return Convert.ToInt32(id);
+            }
+            else
+            {
+                return SqlHelper.ExecuteNonQuery(type, transaction, sql);
+            }
+        }
+
+        public static bool Exist<T>(DbType type, IDbTransaction transaction, string key, object keyVal)
+        {
+            string sql = GenExistSql<T>(type, key, keyVal);
+
+            object result = SqlHelper.ExecuteScalar(type, transaction, sql);
+            return result.ToString() != "0";
+        }
+
+        public static int Update<T>(DbType type, IDbTransaction transaction, T entity, string key, object keyVal)
+        {
+            string sql = GenUpdateSql(type, entity, key, keyVal);
+
+            return SqlHelper.ExecuteNonQuery(type, transaction, sql);
+        }
+
+        public static int Update<T>(DbType type, IDbTransaction transaction, T entity)
+        {
+            string sql = GenUpdateSql(type, entity);
+
+            return SqlHelper.ExecuteNonQuery(type, transaction, sql);
+        }
+
+        public static int Update(DbType type, IDbTransaction transaction, string sql)
+        {
+            return SqlHelper.ExecuteNonQuery(type, transaction, sql);
+        }
+
+        public static int SelectCount<T>(DbType type, IDbTransaction transaction, QueryFilter queryFilter)
+        {
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectCountSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
+            var count = SelectScalar(type, transaction, sql);
+
+            int result = -1;
+            int.TryParse(count.ToString(), out result);
+
+            return result;
+        }
+
+        public static T SelectOne<T>(DbType type, IDbTransaction transaction, string key, object keyVal)
+        {
+            string sql = GenSelectSql<T>(type, key, keyVal);
+            var result = SqlHelper.Query<T>(type, transaction, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static T SelectOne<T>(DbType type, IDbTransaction transaction, QueryFilter queryFilter)
+        {
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
+            var result = SqlHelper.Query<T>(type, transaction, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static T SelectOne<T>(DbType type, IDbTransaction transaction, string sql)
+        {
+            var result = SqlHelper.Query<T>(type, transaction, sql);
+
+            if (result.Count() == 1)
+            {
+                return result.Single();
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static T SelectOne<T>(DbType type, IDbTransaction transaction, Dictionary<string, object> keyVals)
+        {
+            string sql = GenSelectSql<T>(type, keyVals);
+            return SelectOne<T>(type, transaction, sql);
+        }
+
+        public static object SelectScalar(DbType type, IDbTransaction transaction, string sql)
+        {
+            return SqlHelper.ExecuteScalar(type, transaction, sql);
+        }
+
+        public static object SelectScalar<T>(DbType type, IDbTransaction transaction, string col, Dictionary<string, object> keyVals)
+        {
+            var sql = GenScalaSql<T>(type, col, keyVals);
+            return SqlHelper.ExecuteScalar(type, transaction, sql);
+        }
+        public static IEnumerable<T> Select<T>(DbType type, IDbTransaction transaction)
+        {
+            string sql = GenSelectSql<T>(type);
+            return Select<T>(type, transaction, sql);
+        }
+
+        public static IEnumerable<T> Select<T>(DbType type, IDbTransaction transaction, string key, object keyVal)
+        {
+            string sql = GenSelectSql<T>(type, key, keyVal);
+            return Select<T>(type, transaction, sql);
+        }
+
+        public static IEnumerable<T> Select<T>(DbType type, IDbTransaction transaction, Dictionary<string, object> keyVals)
+        {
+            string sql = GenSelectSql<T>(type, keyVals);
+            return Select<T>(type, transaction, sql);
+        }
+
+        public static IEnumerable<T> Select<T>(DbType type, IDbTransaction transaction, QueryFilter queryFilter)
+        {
+            string filterSql = GenFilterSql(type, queryFilter);
+            string sql = GenSelectSql<T>(type);
+            if (!string.IsNullOrEmpty(filterSql))
+            {
+                sql += " where " + filterSql;
+            }
+            return Select<T>(type, transaction, sql);
+        }
+
+        public static IEnumerable<T> Select<T>(DbType type, IDbTransaction transaction, string sql)
+        {
+            return SqlHelper.Query<T>(type, transaction, sql);
+        }
+
+        public static int Remove(DbType type, IDbTransaction transaction, string sql)
+        {
+            return SqlHelper.ExecuteNonQuery(type, transaction, sql);
+        }
+
+        public static int Remove<T>(DbType type, IDbTransaction transaction, string key, object keyVal)
+        {
+            string sql = GenRemoveSql<T>(type, key, keyVal);
+            return Remove(type, transaction, sql);
+        }
+        #endregion
+
+        #region Async Transaction Methods
+        public static async Task<int> InsertAsync<T>(DbType type, IDbTransaction transaction, T entity)
         {
             string sql = GenInsertSql(type, entity, out bool hasIdentity);
             if (hasIdentity)
@@ -219,7 +582,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<bool> Exist<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
+        public static async Task<bool> ExistAsync<T>(DbType type, IDbTransaction transaction, string key, object keyVal)
         {
             string sql = GenExistSql<T>(type, key, keyVal);
 
@@ -227,26 +590,26 @@ namespace SystemCommonLibrary.Data.Manager
             return result.ToString() != "0";
         }
 
-        public static async Task<int> Update<T>(DbType type, System.Data.IDbTransaction transaction, T entity, string key, object keyVal)
+        public static async Task<int> UpdateAsync<T>(DbType type, IDbTransaction transaction, T entity, string key, object keyVal)
         {
             string sql = GenUpdateSql(type, entity, key, keyVal);
 
             return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
         }
 
-        public static async Task<int> Update<T>(DbType type, System.Data.IDbTransaction transaction, T entity)
+        public static async Task<int> UpdateAsync<T>(DbType type, IDbTransaction transaction, T entity)
         {
             string sql = GenUpdateSql(type, entity);
 
             return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
         }
 
-        public static async Task<int> Update(DbType type, System.Data.IDbTransaction transaction, string sql)
+        public static async Task<int> UpdateAsync(DbType type, IDbTransaction transaction, string sql)
         {
             return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
         }
 
-        public static async Task<int> SelectCount<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
+        public static async Task<int> SelectCountAsync<T>(DbType type, IDbTransaction transaction, QueryFilter queryFilter)
         {
             string filterSql = GenFilterSql(type, queryFilter);
             string sql = GenSelectCountSql<T>(type);
@@ -254,7 +617,7 @@ namespace SystemCommonLibrary.Data.Manager
             {
                 sql += " where " + filterSql;
             }
-            var count = await SelectScalar(type, transaction, sql);
+            var count = await SelectScalarAsync(type, transaction, sql);
 
             int result = -1;
             int.TryParse(count.ToString(), out result);
@@ -262,7 +625,7 @@ namespace SystemCommonLibrary.Data.Manager
             return result;
         }
 
-        public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
+        public static async Task<T> SelectOneAsync<T>(DbType type, IDbTransaction transaction, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
             var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
@@ -277,7 +640,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
+        public static async Task<T> SelectOneAsync<T>(DbType type, IDbTransaction transaction, QueryFilter queryFilter)
         {
             string filterSql = GenFilterSql(type, queryFilter);
             string sql = GenSelectSql<T>(type);
@@ -297,7 +660,7 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, string sql)
+        public static async Task<T> SelectOneAsync<T>(DbType type, IDbTransaction transaction, string sql)
         {
             var result = await SqlHelper.QueryAsync<T>(type, transaction, sql);
 
@@ -311,41 +674,42 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
-        public static async Task<T> SelectOne<T>(DbType type, System.Data.IDbTransaction transaction, Dictionary<string, object> keyVals)
+        public static async Task<T> SelectOneAsync<T>(DbType type, IDbTransaction transaction, Dictionary<string, object> keyVals)
         {
             string sql = GenSelectSql<T>(type, keyVals);
-            return await SelectOne<T>(type, transaction, sql);
+            return await SelectOneAsync<T>(type, transaction, sql);
         }
 
-        public static async Task<object> SelectScalar(DbType type, System.Data.IDbTransaction transaction, string sql)
+        public static async Task<object> SelectScalarAsync(DbType type, IDbTransaction transaction, string sql)
         {
             return await SqlHelper.ExecuteScalarAsync(type, transaction, sql);
         }
 
-        public static async Task<object> SelectScalar<T>(DbType type, System.Data.IDbTransaction transaction, string col, Dictionary<string, object> keyVals)
+        public static async Task<object> SelectScalarAsync<T>(DbType type, IDbTransaction transaction, string col, Dictionary<string, object> keyVals)
         {
             var sql = GenScalaSql<T>(type, col, keyVals);
             return await SqlHelper.ExecuteScalarAsync(type, transaction, sql);
         }
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction)
+        
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, IDbTransaction transaction)
         {
             string sql = GenSelectSql<T>(type);
-            return await Select<T>(type, transaction, sql);
+            return await SelectAsync<T>(type, transaction, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, IDbTransaction transaction, string key, object keyVal)
         {
             string sql = GenSelectSql<T>(type, key, keyVal);
-            return await Select<T>(type, transaction, sql);
+            return await SelectAsync<T>(type, transaction, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, Dictionary<string, object> keyVals)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, IDbTransaction transaction, Dictionary<string, object> keyVals)
         {
             string sql = GenSelectSql<T>(type, keyVals);
-            return await Select<T>(type, transaction, sql);
+            return await SelectAsync<T>(type, transaction, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, QueryFilter queryFilter)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, IDbTransaction transaction, QueryFilter queryFilter)
         {
             string filterSql = GenFilterSql(type, queryFilter);
             string sql = GenSelectSql<T>(type);
@@ -353,23 +717,23 @@ namespace SystemCommonLibrary.Data.Manager
             {
                 sql += " where " + filterSql;
             }
-            return await Select<T>(type, transaction, sql);
+            return await SelectAsync<T>(type, transaction, sql);
         }
 
-        public static async Task<IEnumerable<T>> Select<T>(DbType type, System.Data.IDbTransaction transaction, string sql)
+        public static async Task<IEnumerable<T>> SelectAsync<T>(DbType type, IDbTransaction transaction, string sql)
         {
             return await SqlHelper.QueryAsync<T>(type, transaction, sql);
         }
 
-        public static async Task<int> Remove(DbType type, System.Data.IDbTransaction transaction, string sql)
+        public static async Task<int> RemoveAsync(DbType type, IDbTransaction transaction, string sql)
         {
             return await SqlHelper.ExecuteNonQueryAsync(type, transaction, sql);
         }
 
-        public static async Task<int> Remove<T>(DbType type, System.Data.IDbTransaction transaction, string key, object keyVal)
+        public static async Task<int> RemoveAsync<T>(DbType type, IDbTransaction transaction, string key, object keyVal)
         {
             string sql = GenRemoveSql<T>(type, key, keyVal);
-            return await Remove(type, transaction, sql);
+            return await RemoveAsync(type, transaction, sql);
         }
         #endregion
 

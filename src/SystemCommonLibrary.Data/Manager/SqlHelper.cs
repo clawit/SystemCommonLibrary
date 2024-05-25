@@ -32,6 +32,80 @@ namespace SystemCommonLibrary.Data.Manager
             }
         }
 
+        #region Sync Methods
+
+        public static object ExecuteScalar(DbType type, string connectionString, string sql)
+        {
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
+            using (var connection = CreateConnection(type, connectionString))
+            {
+                return connection.ExecuteScalar(sql);
+            }
+        }
+
+        public static int Execute(DbType type, string connectionString, string sql)
+        {
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
+            using (var connection = CreateConnection(type, connectionString))
+            {
+                return connection.Execute(sql);
+            }
+        }
+
+        public static IEnumerable<T> Query<T>(DbType type, string connectionString, string sql)
+        {
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
+            using (var connection = CreateConnection(type, connectionString))
+            {
+                return connection.Query<T>(sql);
+            }
+        }
+
+        public static object ExecuteScalar(DbType type, IDbTransaction transaction, string sql)
+        {
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+            return transaction.Connection.ExecuteScalar(sql, transaction);
+        }
+
+        public static int ExecuteNonQuery(DbType type, IDbTransaction transaction, string sql)
+        {
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
+            return transaction.Connection.Execute(sql, transaction);
+        }
+
+        public static IEnumerable<T> Query<T>(DbType type, IDbTransaction transaction, string sql)
+        {
+            if (DebugMode)
+            {
+                Console.WriteLine(sql);
+            }
+
+            return transaction.Connection.Query<T>(sql, transaction);
+        }
+
+        #endregion
+
+        #region Async Methods
+
         public static async Task<object> ExecuteScalarAsync(DbType type, string connectionString, string sql)
         {
             if (DebugMode)
@@ -99,5 +173,7 @@ namespace SystemCommonLibrary.Data.Manager
 
             return await transaction.Connection.QueryAsync<T>(sql, transaction);
         }
+        
+        #endregion
     }
 }
