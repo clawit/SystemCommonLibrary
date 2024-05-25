@@ -30,7 +30,7 @@ namespace SystemCommonLibrary.AspNetCore.Controller
         [HttpGet]
         public virtual async Task<IActionResult> Get(int id)
         {
-            var entity = await DbEntityManager.SelectOne<T>(DbType, Db, nameof(Entity.Id), id);
+            var entity = await DbEntityManager.SelectOneAsync<T>(DbType, Db, nameof(Entity.Id), id);
             return Ok(entity);
         }
 
@@ -38,7 +38,7 @@ namespace SystemCommonLibrary.AspNetCore.Controller
         public virtual async Task<IActionResult> Query()
         {
             var query = QueryFilterHeler.Convert<T>(Request.Query);
-            var entities = await DbEntityManager.Select<T>(DbType, Db, query);
+            var entities = await DbEntityManager.SelectAsync<T>(DbType, Db, query);
             return Ok(entities);
         }
 
@@ -54,7 +54,7 @@ namespace SystemCommonLibrary.AspNetCore.Controller
             {
                 entity = DynamicJson.Parse(json.ToString()).Deserialize<T>();
             }
-            await DbEntityManager.Insert(DbType, Db, entity);
+            await DbEntityManager.InsertAsync(DbType, Db, entity);
             return Created($"api/{typeof(T).Name}/{entity.Id}", entity);
         }
 
@@ -65,7 +65,7 @@ namespace SystemCommonLibrary.AspNetCore.Controller
             {
                 json = DynamicJson.Parse(json.ToString());
             }
-            var entity = await DbEntityManager.SelectOne<T>(DbType, Db, nameof(Entity.Id), id);
+            var entity = await DbEntityManager.SelectOneAsync<T>(DbType, Db, nameof(Entity.Id), id);
 
             var ps = entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in ps)
@@ -117,14 +117,14 @@ namespace SystemCommonLibrary.AspNetCore.Controller
                 }
             }
 
-            await DbEntityManager.Update(DbType, Db, entity);
+            await DbEntityManager.UpdateAsync(DbType, Db, entity);
             return Ok(entity);
         }
 
         [HttpDelete]
         public virtual async Task<IActionResult> Delete(int id)
         {
-            await DbEntityManager.Remove<T>(DbType, Db, nameof(Entity.Id), id);
+            await DbEntityManager.RemoveAsync<T>(DbType, Db, nameof(Entity.Id), id);
             return Ok();
         }
 
