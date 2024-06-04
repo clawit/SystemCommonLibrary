@@ -17,10 +17,11 @@ namespace SystemCommonLibrary.Math
 			byte [] randomNumber = new byte [1];
 
 			// Create a new instance of the RNGCryptoServiceProvider. 
-			RNGCryptoServiceProvider Gen = new RNGCryptoServiceProvider ();
+			var gen = RandomNumberGenerator.Create ();
+			
 
 			// Fill the array with a random value.
-			Gen.GetNonZeroBytes (randomNumber);
+			gen.GetNonZeroBytes(randomNumber);
 
 			// Convert the byte to an integer value to make the modulus operation easier.
 			int rand = Convert.ToInt32 (randomNumber [0]);
