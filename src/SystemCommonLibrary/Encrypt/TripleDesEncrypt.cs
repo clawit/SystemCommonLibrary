@@ -84,7 +84,7 @@ namespace SystemCommonLibrary.Encrypt
                                                             , 30
                                                         };
 
-        private static readonly TripleDESCryptoServiceProvider Tdes = new TripleDESCryptoServiceProvider();
+        private static readonly TripleDES Tdes = TripleDES.Create();
 
         /// <summary>
         /// byte[] to byte[], use custom key and iv
