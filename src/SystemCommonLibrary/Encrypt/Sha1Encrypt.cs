@@ -11,7 +11,7 @@ namespace SystemCommonLibrary.Encrypt
 		public static string Sha1 (string content)
 		{
 			byte [] input = Encoding.UTF8.GetBytes (content);
-			SHA1 sha1 = new SHA1CryptoServiceProvider ();
+			var sha1 = SHA1.Create();
 			byte [] output = sha1.ComputeHash (input);
 
 			return BitConverter.ToString (output);
