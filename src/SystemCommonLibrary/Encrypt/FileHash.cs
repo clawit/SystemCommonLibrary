@@ -13,11 +13,10 @@ namespace SystemCommonLibrary.Encrypt
 		{
             using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 8192))
             {
-                MD5CryptoServiceProvider md5csp = new MD5CryptoServiceProvider();
-                md5csp.ComputeHash(fs);
+                var md5s = MD5.Create();
+                byte[] b = md5s.ComputeHash(fs);
                 fs.Close();
 
-                byte[] b = md5csp.Hash;
                 string md5 = BitConverter.ToString(b).Replace("-", string.Empty);
 
                 return md5;
@@ -26,10 +25,8 @@ namespace SystemCommonLibrary.Encrypt
 
         public static string ComputeMd5Hash(FileStream fs)
         {
-            MD5CryptoServiceProvider md5csp = new MD5CryptoServiceProvider();
-            md5csp.ComputeHash(fs);
-
-            byte[] b = md5csp.Hash;
+            var md5s = MD5.Create();
+            byte[] b = md5s.ComputeHash(fs);
             string md5 = BitConverter.ToString(b).Replace("-", string.Empty);
 
             return md5;
