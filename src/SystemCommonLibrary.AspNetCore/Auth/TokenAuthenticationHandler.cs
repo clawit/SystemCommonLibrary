@@ -7,13 +7,8 @@ using System.Threading.Tasks;
 
 namespace SystemCommonLibrary.AspNetCore.Auth
 {
-    public class TokenAuthenticationHandler : AuthenticationHandler<TokenAuthenticationOptions>
+    public class TokenAuthenticationHandler(IOptionsMonitor<TokenAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder) : AuthenticationHandler<TokenAuthenticationOptions>(options, logger, encoder)
     {
-        public TokenAuthenticationHandler(IOptionsMonitor<TokenAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
-        {
-
-        }
-
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var authorization = this.Request.Headers[AuthConst.AuthKey].ToString();
