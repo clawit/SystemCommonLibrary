@@ -99,11 +99,21 @@ namespace UnitTest
         Enum2 = 100
     }
 
+    public class ClassChinese
+    {
+        public string Dim1 { get; set; } = "你好!Hello!";
+    }
+
     public class BitSerializerTest
     {
         [Fact]
         public void SerializeAndDeserializeTest() 
         {
+            var src7 = new ClassChinese();
+            var bytes7 = BitSerializer.Serialize(src7);
+            var dest7 = BitSerializer.Deserialize<ClassChinese>(bytes7);
+            Assert.Equal(src7.Dim1, dest7.Dim1);
+
             var src6 = new LevelThree()
             {
                 Dim1 = typeof(LevelTwo),
