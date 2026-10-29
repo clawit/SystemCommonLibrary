@@ -770,7 +770,7 @@ namespace SystemCommonLibrary.Data.Manager
             return sql;
         }
 
-        private static string GenInsertSql<T>(DbType type, T entity, out bool hasIdentity)
+        internal static string GenInsertSql<T>(DbType type, T entity, out bool hasIdentity)
         {
             List<string> lstCols = new List<string>();
             List<string> lstVals = new List<string>();
@@ -782,6 +782,12 @@ namespace SystemCommonLibrary.Data.Manager
             {
                 bool isKey = column.GetCustomAttributes(typeof(KeyAttribute), true).Length > 0;
                 object val = column.GetValue(entity);
+                if (IsUnsetCreateAt(entity, column.Name, val))
+                {
+                    // Entity 的 CreateAt 未赋值时不写入, 交由数据库默认值 (如 CURRENT_TIMESTAMP) 生成
+                    continue;
+                }
+
                 if (!isKey)
                 {
                     lstVals.Add(FormatValue(type, val));
@@ -803,6 +809,14 @@ namespace SystemCommonLibrary.Data.Manager
                 sql += GetLastIdentity(type, typeof(T).Name, identityKey);
             }
             return sql;
+        }
+
+        private static bool IsUnsetCreateAt<T>(T entity, string column, object val)
+        {
+            return entity is DataEntity.Entity
+                && column == nameof(DataEntity.Entity.CreateAt)
+                && val is DateTime dt
+                && dt == DateTime.MinValue;
         }
 
         private static string GenExistSql<T>(DbType type, string key, object keyVal)
